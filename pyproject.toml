@@ -18,6 +18,7 @@ docs = [
     "sphinx >=7,<10",
     "sphinx_autodoc_typehints >= 1.19",
     "sphinx-book-theme ~= 1.2.0",
+    "myst_parser >= 0.14.0",
 ]
 
 [tool.pixi.workspace]

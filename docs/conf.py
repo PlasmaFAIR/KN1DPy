@@ -22,6 +22,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
     "sphinx_autodoc_typehints",
+    "myst_parser",
 ]
 
 templates_path = ["_templates"]
@@ -39,6 +40,10 @@ numfig = True
 autodoc_type_aliases = {
     "NDArray": "numpy.typing.NDArray",
     "ArrayLike": "numpy.typing.ArrayLike",
+}
+
+napoleon_type_aliases = {
+    "ndarray": "numpy.typing.NDArray",
 }
 
 autodoc_default_options = {"ignore-module-all": True}

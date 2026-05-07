@@ -23,6 +23,8 @@ A comprehensive description of the algorithm can be found in this `PSFC report
    :maxdepth: 2
    :caption: User Guide:
 
+   kn1d_lite
+
 .. toctree::
    :maxdepth: 2
    :caption: Reference
