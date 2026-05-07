@@ -48,7 +48,7 @@ napoleon_type_aliases = {
 
 autodoc_default_options = {"ignore-module-all": True}
 autodoc_typehints = "description"
-autodoc_class_signature = "mixed"
+# autodoc_class_signature = "mixed"
 
 # The default role for text marked up `like this`
 default_role = "any"
@@ -78,4 +78,13 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "numpy": ("https://numpy.org/doc/stable", None),
     "scipy": ("https://docs.scipy.org/doc/scipy", None),
+}
+
+nitpick_ignore = {
+    ("py:class", "numpy.typing.ArrayLike"),
+    ("py:class", "numpy.typing.NDArray"),
+    ("py:class", "numpy.typing.Scalar"),
+}
+nitpick_ignore_regex = {
+    ("py:class", r".*_ScalarT"),
 }
