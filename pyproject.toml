@@ -24,6 +24,7 @@ platforms = ["linux-64", "osx-arm64", "win-64"]
 
 [tool.pixi.environments]
 tests = { features = ["tests"], solve-group = "default" }
+dev = { features = ["dev"], solve-group = "default" }
 
 [tool.pixi.dependencies]
 python = ">=3.12"
@@ -40,6 +41,9 @@ pytest = ">=8.4.1"
 
 [tool.pixi.feature.tests.pypi-dependencies]
 snaptol = ">=0.0.4"
+
+[tool.pixi.feature.dev.pypi-dependencies]
+ruff = ">=0.15.14"
 
 [tool.setuptools.packages.find]
 where = ["."]
