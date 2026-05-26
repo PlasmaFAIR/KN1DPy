@@ -84,9 +84,9 @@ def _test_bounds(fb, test_bound : Bound, var_len, test_axis, iter_bound1 : Bound
             raise Exception("Invalid test axis")
 
         if (start_error == 0) and (test_bound.start > 0) and np.any(min_slice > do_warn*big):
-            warn(f"Non-zero value of fb detected at min({var_name}) boundary")
+            warn(f"Non-zero value of fb detected at min({var_name}) boundary", stacklevel=2)
         if (end_error == 0) and (test_bound.end < var_len-1) and np.any(max_slice > do_warn*big):
-            warn(f"Non-zero value of fb detected at max({var_name}) boundary")
+            warn(f"Non-zero value of fb detected at max({var_name}) boundary", stacklevel=2)
 
 
 def interp_fvrvxx(fa: np.ndarray, mesh_a : KineticMesh, mesh_b : KineticMesh, do_warn=None, debug=False, correct=1):
