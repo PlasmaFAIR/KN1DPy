@@ -2,6 +2,7 @@
 New for the python version. Option to use the ADAS ionisation and recombination rates.
 '''
 
+import contextlib
 import urllib.request
 from pathlib import Path
 
@@ -52,10 +53,8 @@ def read_adf11(filename):
         else:
             stripped = line.strip()
             if stripped and not stripped.startswith('-' * 10):
-                try:
+                with contextlib.suppress(ValueError):
                     current.extend(parse_numbers(line))
-                except ValueError:
-                    pass
     sections.append(current)
 
     grid_values = np.array(sections[0])

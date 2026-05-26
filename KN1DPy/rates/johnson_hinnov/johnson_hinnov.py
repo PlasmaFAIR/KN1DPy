@@ -215,7 +215,7 @@ class Johnson_Hinnov():
             raise Exception('“p” must greater than 0')
 
         result = np.full_like(Density, 1.0e32)
-        ok = np.where((0.0 < Density) & (Density < 1.0e32) & (0.0 < Te) & (Te < 1.0e32))[0]
+        ok = np.where((Density > 0.0) & (Density < 1.0e32) & (Te > 0.0) & (Te < 1.0e32))[0]
 
         result[ok] = 3.310E-28*((Density[ok]*p)**2)*np.exp(13.6057 / ((p**2)*Te[ok])) / (Te[ok]**1.5)
         return result
@@ -262,7 +262,7 @@ class Johnson_Hinnov():
         NHSaha1 = self.nh_saha(Density, Te, 1)
         NHSaha2 = self.nh_saha(Density, Te, 2)
 
-        ok = np.where((0 < N0) & (N0 < 1e32) & (r02 < 1.0e32) & (r12 < 1.0e32) & (NHSaha1 < 1.0e32) & (NHSaha2 < 1.0e32))[0]
+        ok = np.where((N0 > 0) & (N0 < 1e32) & (r02 < 1.0e32) & (r12 < 1.0e32) & (NHSaha1 < 1.0e32) & (NHSaha2 < 1.0e32))[0]
 
         photons[ok] = self.a_lyman[0]*(r02[ok] + (r12[ok]*N0[ok] / NHSaha1[ok]))*NHSaha2[ok]
         result[ok] = 13.6057*0.75*photons[ok]*1.6e-19
@@ -311,7 +311,7 @@ class Johnson_Hinnov():
         NHSaha1 = self.nh_saha(Density, Te, 1)
         NHSaha3 = self.nh_saha(Density, Te, 3)
 
-        ok = np.where((0 < N0) & (N0 < 1e32) & (r03 < 1.0e32) & (r13 < 1.0e32) & (NHSaha1 < 1.0e32) & (NHSaha3 < 1.0e32))[0]
+        ok = np.where((N0 > 0) & (N0 < 1e32) & (r03 < 1.0e32) & (r13 < 1.0e32) & (NHSaha1 < 1.0e32) & (NHSaha3 < 1.0e32))[0]
 
         photons[ok] = self.a_balmer[0]*(r03[ok] + (r13[ok]*N0[ok] / NHSaha1[ok]))*NHSaha3[ok]
         result[ok] = 13.6057*(0.25 - 1.0/9.0)*photons[ok]*1.6e-19

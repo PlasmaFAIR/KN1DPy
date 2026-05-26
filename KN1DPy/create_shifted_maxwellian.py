@@ -215,7 +215,7 @@ def create_shifted_maxwellian(vr,vx,Tmaxwell,vx_shift,mu,mol,Tnorm):
             continue
 
         arg = -((vr[:, np.newaxis]**2 + (vx - (vx_shift[k] / vth))**2)*mol*Tnorm) / Tmaxwell[k]
-        arg = np.where(np.logical_and((-80 < arg), (arg < 0.0)), arg, -80)
+        arg = np.where(np.logical_and((arg > -80), (arg < 0.0)), arg, -80)
         maxwell[:,:,k] = np.exp(arg)
 
         variable = np.matmul(maxwell[:,:,k], vdiff.dvx)
