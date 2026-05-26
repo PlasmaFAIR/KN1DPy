@@ -64,6 +64,7 @@ select = [
   "TCH", # flake8-type-checking
   "UP", # pyupgrade
   "FURB", # refurb
+  "PERF", # perflint
 ]
 ignore = [
   "E501", # Line too long
