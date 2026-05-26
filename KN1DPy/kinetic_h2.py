@@ -34,7 +34,7 @@ from .utils import get_config, path_interp_2d, sval
 # Dataclasses for use in kinetic_h
 
 @dataclass
-class KH2Collisions():
+class KH2Collisions:
     '''
     Collision settings for Kinetic H2 procedure
     '''
@@ -45,7 +45,7 @@ class KH2Collisions():
     Simple_CX: bool = False
 
 @dataclass
-class MeshEqCoefficients():
+class MeshEqCoefficients:
     '''
     Mesh Equation values used in kinetic_h iteration
     Eqs. (3.22), (3.25), (3.30), (3.33)
@@ -58,7 +58,7 @@ class MeshEqCoefficients():
     G: NDArray
 
 @dataclass
-class CollisionType():
+class CollisionType:
     '''
     Data class for grouping H_H, H_P, and H_H2 elastic collision data
     '''
@@ -67,7 +67,7 @@ class CollisionType():
     H2_H: NDArray
 
 @dataclass
-class KH2Results():
+class KH2Results:
     '''
     Variables for results of KineticH2.run_procedure()
     See run_procedure for more detail on individual variables
@@ -97,7 +97,7 @@ class KH2Results():
     ESH: NDArray = None
     Eaxis: NDArray = None
 
-class KineticH2():
+class KineticH2:
 
     '''
     This class is part of the "KN1D" atomic and molecular neutal transport code.
@@ -379,7 +379,7 @@ class KineticH2():
         Do_Alpha_CX, Do_Alpha_H2_P = self._compute_dynamic_internals(fH, fH2, nHP, THP)
 
         # Compute nH2
-        nH2 = np.zeros((nx))
+        nH2 = np.zeros(nx)
         for k in range(0, nx):
             nH2[k] = np.sum(self.dvr_vol*(np.matmul(fH2[:,:,k], self.dvx)))
 
@@ -766,7 +766,7 @@ class KineticH2():
             return CollisionType(Omega_H2_H2, Omega_H2_P, Omega_H2_H)
 
         # compute VxH2
-        VxH2 = np.zeros((nx))
+        VxH2 = np.zeros(nx)
         if self.COLLISIONS.H2_P_EL or self.COLLISIONS.H2_H_EL or self.COLLISIONS.H2_H2_EL:
             for k in range(nx):
                 VxH2[k] = self.vth*np.sum(self.dvr_vol*(fH2[:,:,k] @ (self.mesh.vx*self.dvx))) / nH2[k]
@@ -778,7 +778,7 @@ class KineticH2():
                 DeltaVx = (VxH2[k] - self.vxi[k])/self.vth
                 MagDeltaVx = np.maximum(np.abs(DeltaVx), self.DeltaVx_tol)
                 DeltaVx = np.sign(DeltaVx)*MagDeltaVx
-                Omega_H2_P[k] = np.sum(self.dvr_vol*(((self.Internal.Alpha_H2_P[:,:,k]*fH2[:,:,k]) @ self.dvx)))/(nH2[k]*DeltaVx)
+                Omega_H2_P[k] = np.sum(self.dvr_vol*((self.Internal.Alpha_H2_P[:,:,k]*fH2[:,:,k]) @ self.dvx))/(nH2[k]*DeltaVx)
             Omega_H2_P =  np.maximum(Omega_H2_P, 0)
 
         # Compute Omega_H2_H for present fH2 and Alpha_H2_H if H2_H elastic collisions are included
@@ -1113,7 +1113,7 @@ class KineticH2():
             self._debrief_msg('Computing Source Error', 1)
             # Test Mass Balance
             # The relationship, 2 dGammaxH2/dx - 2 SH2 + SH + SP + 2 nHp x Nuloss = 0, should be satisfied.
-            dGammaxH2dx = np.zeros((nx-1))
+            dGammaxH2dx = np.zeros(nx-1)
             SH_p = np.zeros(nx-1)
             for k in range(nx-1):
                 dGammaxH2dx[k] = (GammaxH2[k+1] - GammaxH2[k]) / (self.mesh.x[k+1] - self.mesh.x[k])
@@ -1557,7 +1557,7 @@ class KineticH2():
                 continue
             self.H_Moments.VxH[k] = self.vth*np.sum(self.dvr_vol*(fH[:,:,k] @ (self.mesh.vx*self.dvx))) / self.H_Moments.nH[k]
             vr2vx2_ran2 = self.mesh.vr[:, None]**2 + (self.mesh.vx[None, :] - self.H_Moments.VxH[k]/self.vth)**2
-            self.H_Moments.TH[k] = (self.mu*CONST.H_MASS)*(self.vth**2)*np.sum((self.dvr_vol*((vr2vx2_ran2*fH[:,:,k]) @ self.dvx))) / (3*CONST.Q*self.H_Moments.nH[k])
+            self.H_Moments.TH[k] = (self.mu*CONST.H_MASS)*(self.vth**2)*np.sum(self.dvr_vol*((vr2vx2_ran2*fH[:,:,k]) @ self.dvx)) / (3*CONST.Q*self.H_Moments.nH[k])
 
         return
 

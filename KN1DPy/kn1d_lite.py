@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 
 import numpy as np
 from numpy.typing import NDArray
@@ -31,8 +30,8 @@ class KN1DLiteResults:
     Sion: NDArray
     fHBC: NDArray
     GammaxHBC: float
-    nH_gen0: Optional[NDArray] = None
-    nH_generations: Optional[NDArray] = None
+    nH_gen0: NDArray | None = None
+    nH_generations: NDArray | None = None
 
 
 def kn1d_lite(

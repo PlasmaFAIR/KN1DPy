@@ -5,7 +5,7 @@ from scipy import interpolate
 from ...utils import bs2dr, get_local_directory
 
 
-class Johnson_Hinnov():
+class Johnson_Hinnov:
     '''
     This class handles various operations involving Johnson-Hinnov rate equations and coefficients
     [L.C.Johnson and E. Hinnov, Journal of Quantitative Spectroscopy & Radiative Transfer. vol. 13 pp.333-358]
