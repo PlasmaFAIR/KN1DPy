@@ -1,5 +1,5 @@
-import os
 from dataclasses import dataclass
+from pathlib import Path
 
 import numpy as np
 import tomli_w
@@ -416,14 +416,14 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
 
     # Determine output directory
     if File is None:
-        out_dir = os.path.join('Results', 'output')
+        out_dir = Path('Results') / 'output'
     else:
-        out_dir = File
-    os.makedirs(out_dir, exist_ok=True)
+        out_dir = Path(File)
+    out_dir.mkdir(parents=True, exist_ok=True)
     print(prompt, "Saving files to", out_dir)
 
     # KN1D_input: raw user inputs + interpolated profiles on each mesh
-    np.savez(os.path.join(out_dir, 'KN1D_input.npz'),
+    np.savez(out_dir / 'KN1D_input.npz',
             x=x, xlimiter=xlimiter, xsep=xsep, GaugeH2=GaugeH2,
             mu=mu, Ti=Ti, Te=Te, n=n, vxi=vxi, LC=LC,
             PipeDia=PipeDia, truncate=truncate,
@@ -433,7 +433,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
             PipeDiaA=kh_mesh.PipeDia, vxA=kh_mesh.vx, vrA=kh_mesh.vr, TnormA=kh_mesh.Tnorm)
 
     # KN1D_mesh: snapshot of mesh state (mirrors IDL KN1D_mesh save set, used for restart/comparison)
-    np.savez(os.path.join(out_dir, 'KN1D_mesh.npz'),
+    np.savez(out_dir / 'KN1D_mesh.npz',
             x_s=x, GaugeH2_s=GaugeH2, mu_s=mu,
             Ti_s=Ti, Te_s=Te, n_s=n, vxi_s=vxi,
             LC_s=LC, PipeDia_s=PipeDia,
@@ -441,7 +441,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
             xH_s=kh_mesh.x, vxA_s=kh_mesh.vx, vrA_s=kh_mesh.vr, TnormA_s=kh_mesh.Tnorm)
 
     # KN1D_H2: full molecular output
-    np.savez(os.path.join(out_dir, 'KN1D_H2.npz'),
+    np.savez(out_dir / 'KN1D_H2.npz',
             xH2=kh2_mesh.x,
             fH2=kh2_results.fH2,
             nH2=kh2_results.nH2,
@@ -480,7 +480,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
             GammaxH2_minus=kh2_results.GammaxH2[-1])
 
     # KN1D_H: full atomic output
-    np.savez(os.path.join(out_dir, 'KN1D_H.npz'),
+    np.savez(out_dir / 'KN1D_H.npz',
             xH=kh_mesh.x,
             fH=kh_results.fH,
             nH=kh_results.nH,
@@ -521,7 +521,8 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
 
     # config snapshot — read before opening to avoid truncating the source file
     config_snapshot = get_config(config_path)
-    with open(os.path.join(out_dir, 'config.toml'), 'wb') as f:
+    config_toml = out_dir / 'config.toml'
+    with config_toml.open('wb') as f:
         tomli_w.dump(config_snapshot, f)
 
     # Format Results into Dataclass

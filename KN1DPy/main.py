@@ -1,8 +1,8 @@
 import argparse
-import os
 import sys
 import time
 from dataclasses import asdict
+from pathlib import Path
 
 import numpy as np
 from scipy.io import readsav
@@ -50,7 +50,7 @@ def run():
     print("Elapsed Time: ", end - start)
     print()
 
-    output = open("Results/output.txt", "w")
+    output = Path("Results/output.txt").open("w")
     sys.stdout = output
 
     for key, value in asdict(results).items():
@@ -65,7 +65,7 @@ def run():
 def run_lite():
     """Entry point for running kn1d_lite from an external environment via subprocess."""
 
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, Path(__file__).resolve().parent)
     from KN1DPy.kn1d_lite import kn1d_lite
 
     parser = argparse.ArgumentParser()
