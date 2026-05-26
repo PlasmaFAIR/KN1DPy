@@ -65,6 +65,7 @@ select = [
   "UP", # pyupgrade
   "FURB", # refurb
   "PERF", # perflint
+  "RUF", # ruff specific
 ]
 ignore = [
   "E501", # Line too long

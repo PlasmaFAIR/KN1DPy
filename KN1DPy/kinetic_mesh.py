@@ -52,7 +52,7 @@ class KineticMesh:
             PipeDia     : NDArray,
             jh          : Johnson_Hinnov = None,
             E0          : NDArray | None = None,
-            fctr        : float   = None,
+            fctr        : float | None = None,
             config_path : str     = './config.toml'):
 
         print("generating kinetic_" + mesh_type + "_mesh")
