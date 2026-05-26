@@ -63,6 +63,7 @@ select = [
   "SIM", # flake8-simplify
   "TCH", # flake8-type-checking
   "UP", # pyupgrade
+  "FURB", # refurb
 ]
 ignore = [
   "E501", # Line too long
