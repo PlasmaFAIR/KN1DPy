@@ -54,6 +54,7 @@ select = [
   "E", # pycodestyle error
   "W", # pycodestyle warning
   "I", # isort
+  "PT", # flake8-pytest-style
 ]
 ignore = [
   "E501", # Line too long
