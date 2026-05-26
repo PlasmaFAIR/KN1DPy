@@ -6,7 +6,7 @@ def sigmav_h1s_h2s_hh(Te):
     '''
     Computes maxwellian averaged <sigma V) for electron impact
     dissociation of molecular hydrogen resulting in one H atom in
-    the 1s state and one H atom in the 2s state. Coefficients are taken from 
+    the 1s state and one H atom in the 2s state. Coefficients are taken from
 
         Janev, "Elementary Processes in Hydrogen-Helium Plasmas",
         Springer-Verlag, 1987, p.259.
@@ -33,9 +33,9 @@ def sigmav_h1s_h2s_hh(Te):
          -2.229578042005e-3,
           8.890114963166e-5,
          -1.523912962346e-6]
-    
+
     # Ensure 0.1 < Te < 2.01e4
     Te = np.clip(Te, 0.1, 2.01e4)
 
     result = np.exp(poly(np.log(Te), b))*1e-6
-    return result 
+    return result

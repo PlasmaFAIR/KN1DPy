@@ -36,7 +36,7 @@ def compensate_distribution(f_slice, vdiff, vr, vx, vth, target_vx, target_energ
         s : float
             Correction scalar (Used in interp_fvrvxx)
     '''
-    
+
     #NOTE Get nb name checked
 
     vth_diffs = np.zeros((vr.size, vx.size, 2), float)
@@ -76,7 +76,7 @@ def compensate_distribution(f_slice, vdiff, vr, vx, vth, target_vx, target_energ
 
     diff_padded = np.roll(vth_dist, shift=1, axis=1) - vth_dist
     vth_diffs[:,:,0]   = np.copy(diff_padded[vr_center, vx_center])
-    
+
     diff_padded = -np.roll(vth_dist, shift=-1, axis=1) + vth_dist
     vth_diffs[:,:,1]   = np.copy(diff_padded[vr_center, vx_center])
 
@@ -110,7 +110,7 @@ def compensate_distribution(f_slice, vdiff, vr, vx, vth, target_vx, target_energ
     # Cycle through 4 possibilies of sign(a_Max),sign(b_Max)
     TB1 = np.zeros(2, float)
     TB2 = np.zeros(2, float)
-    
+
     for ia in range(2):
 
         # Compute TA1, TA2
@@ -133,7 +133,7 @@ def compensate_distribution(f_slice, vdiff, vr, vx, vth, target_vx, target_energ
             if (denom != 0) and (TA1 != 0):
                 vrvx_scalar = (TA2*(target_vx - vx_moment) - TA1*(target_energy - energy_moment)) / denom
                 vth_scalar = (target_vx - vx_moment - TB1[ib]*vrvx_scalar) / TA1
-                
+
             do_break = (vth_scalar*sign[ia] > 0) and (vrvx_scalar*sign[ib] > 0)
                 #End While Loops
             if do_break:
@@ -177,12 +177,12 @@ def create_shifted_maxwellian(vr,vx,Tmaxwell,vx_shift,mu,mol,Tnorm):
             1=atom, 2=diatomic molecule
         Tnorm : ndarray
             Average Temperatures
-            
+
     Returns
     -------
         Maxwell : ndarray
-           3D array of shape (len(vr), len(vx), len(vx_shift)) 
-           Shifted Maxwellian distribution function having numerically 
+           3D array of shape (len(vr), len(vx), len(vx_shift))
+           Shifted Maxwellian distribution function having numerically
            evaluated vx moment close to Vx_shift and temperature close to Tmaxwell
 
     Notes
@@ -194,7 +194,7 @@ def create_shifted_maxwellian(vr,vx,Tmaxwell,vx_shift,mu,mol,Tnorm):
                 Maxwell(i,*,k)=exp(arg > (-80))
             endfor
 
-        But owing to the discrete velocity space bins, this method does not necessarily lead to a digital representation 
+        But owing to the discrete velocity space bins, this method does not necessarily lead to a digital representation
         of a shifted Maxwellian (Maxwell) that when integrated numerically has the desired vx moment of Vx_shift
         and temperature, Tmaxwell.
 
@@ -222,7 +222,7 @@ def create_shifted_maxwellian(vr,vx,Tmaxwell,vx_shift,mu,mol,Tnorm):
 
         # Target energy density
         target_energy = (vx_shift[k]**2) + (3*CONST.Q*Tmaxwell[k] / (mol*mu*CONST.H_MASS))
-    
+
         maxwell[:,:,k], _ = compensate_distribution(maxwell[:,:,k], vdiff, vr, vx, vth, vx_shift[k], target_energy)
         maxwell[:,:,k] /= np.sum(vdiff.dvr_vol*(np.matmul(maxwell[:,:,k], vdiff.dvx)))
 

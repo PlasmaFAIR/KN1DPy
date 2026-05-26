@@ -6,7 +6,7 @@ def sigma_cx_h0(E, freeman=False):
     '''
     Computes charge exchange cross section for atomic hydrogen. Data are taken either from the polynomial fit in
         Janev, "Elementary Processes in Hydrogen-Helium Plasmas", Springer-Verlag, 1987, p.250.
-    or from Freeman and Jone's analytic fit tabulated in 
+    or from Freeman and Jone's analytic fit tabulated in
         Freeman, E.L., Jones, E.M., "Atomic Collision Processes in Plasma Physics
         Experiments", UKAEA Report No. CLM-R137 (Culham Laboratory, Abington, England 1974)
 
@@ -27,7 +27,7 @@ def sigma_cx_h0(E, freeman=False):
         ndarray
             sigma_CX for 0.1 < E < 2e4 (m^-2)
     '''
-                
+
     E = np.asarray(E)
     if freeman:
         #Set values to minimum .1 and maximum 1e5

@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.typing import NDArray
 
-''' 
+'''
 Authors: Julio Balbin, Carlo Becerra
 Date: August 17th, 2024
 '''
@@ -34,7 +34,7 @@ class VSpace_Differentials:
         vx_fpi, vx_lpi, vx_fni, vx_lni : int
             Indices for positive and negative axial velocities.
     '''
-    
+
     def __init__(self, vr : NDArray, vx : NDArray):
 
         '''
@@ -80,19 +80,19 @@ class VSpace_Differentials:
 
 
         # --- Compute velocity magnitude squared ---
-        self.vmag_squared = vr[:, np.newaxis]**2 + vx**2 
+        self.vmag_squared = vr[:, np.newaxis]**2 + vx**2
 
 
         # --- Get positive and negaitve indices from vx
         pos_vx_indices = np.where(vx>0)[0]
         self.vx_pos_start = int(pos_vx_indices[0])  # First Positive Index
         self.vx_pos_end = int(pos_vx_indices[-1]) # Last Positive Index
- 
+
         neg_vx_indices = np.where(vx<0)[0]
         self.vx_neg_start = int(neg_vx_indices[0])  # First Negative Index
         self.vx_neg_end = int(neg_vx_indices[-1]) # Last Negative Index
 
-    
+
     #Setup string conversion for printing
     def __str__(self):
         string = "Velocity Space Differentials:\n"

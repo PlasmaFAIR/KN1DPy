@@ -1,10 +1,10 @@
-import numpy as np 
+import numpy as np
 from scipy import interpolate
 
 
 def collrad_sigmav_ion_h0(N_e, T_e):
     '''
-    Evaluates ionization rate from the collisional-radiative calculations 
+    Evaluates ionization rate from the collisional-radiative calculations
     of the COLLRAD code (D. Stotler, DEGAS 2 user manual, p.24)
 
     Parameters
@@ -18,7 +18,7 @@ def collrad_sigmav_ion_h0(N_e, T_e):
         ndarray
             Ionization Rate (m^3 s^-1)
     '''
-    
+
     if np.size(N_e) != np.size(T_e):
         raise Exception('Number of elements in inputs do not match.')
 
@@ -26,7 +26,7 @@ def collrad_sigmav_ion_h0(N_e, T_e):
 
     # compute indices for interpolation on sigmav grid:
     indte = np.maximum(10*(np.log10(T_e)+1.2), 0)
-    indte = np.minimum(indte, 59) 
+    indte = np.minimum(indte, 59)
 
     indne = np.maximum(2*(np.log10(dens)-10), 0)
     indne = np.minimum(indne,14)
@@ -217,7 +217,7 @@ def collrad_sigmav_ion_h0(N_e, T_e):
 
     interpfunc = interpolate.RectBivariateSpline(np.arange(xs), np.arange(ys), logsigmav, kx=1, ky=1)
     sigmav_out = np.exp(np.diagonal(interpfunc(indne, indte)))
-    
-    # convert from cm^3 to m^3 
+
+    # convert from cm^3 to m^3
     sigmav_out = sigmav_out/1e6
     return sigmav_out

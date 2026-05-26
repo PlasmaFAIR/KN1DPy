@@ -1,14 +1,14 @@
-import numpy as np 
+import numpy as np
 
-from ...utils import poly 
+from ...utils import poly
 
 def sigma_el_p_h(E):
     '''
-    Computes momentum transfer cross section for elastic collisions of H+ onto H 
-    for specified energy of H+. Data are taken from 
+    Computes momentum transfer cross section for elastic collisions of H+ onto H
+    for specified energy of H+. Data are taken from
 
-        Janev, "Atomic and Molecular Processes in Fusion Edge Plasmas", Chapter 11 - 
-        Elastic and Related Cross Sections for Low-Energy Collisions among Hydrogen and 
+        Janev, "Atomic and Molecular Processes in Fusion Edge Plasmas", Chapter 11 -
+        Elastic and Related Cross Sections for Low-Energy Collisions among Hydrogen and
         Helium Ions, Neutrals, and Isotopes  by D.R. Sdhultz, S. Yu. Ovchinnikov, and S.V.
         Passovets, page 298.
 
@@ -20,15 +20,15 @@ def sigma_el_p_h(E):
     Returns
     -------
         ndarray
-            Sigma for 0.001 < E < 1e5. For E outside this range, 
+            Sigma for 0.001 < E < 1e5. For E outside this range,
             the value of Sigma at the 0.001 or 1e5 eV boundary is returned. (m^-2)
     '''
 
     E = np.asarray(E, dtype=float)
-    
+
     # Ensure that 0.001e0 < E < 1.01e5
     E = np.clip(E, 0.001, 1.01e5)
-    
+
     result = np.zeros_like(E)
     logE = np.log(E)
 
