@@ -415,10 +415,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
     # --- Store Results ---
 
     # Determine output directory
-    if File is None:
-        out_dir = Path('Results') / 'output'
-    else:
-        out_dir = Path(File)
+    out_dir = Path('Results') / 'output' if File is None else Path(File)
     out_dir.mkdir(parents=True, exist_ok=True)
     print(prompt, "Saving files to", out_dir)
 

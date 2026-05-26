@@ -1,6 +1,7 @@
 import argparse
 import sys
 import time
+from contextlib import redirect_stdout
 from dataclasses import asdict
 from pathlib import Path
 
@@ -13,8 +14,6 @@ from KN1DPy.kn1d import kn1d
 def run():
     np.set_printoptions(linewidth=225)
     np.set_printoptions(threshold=sys.maxsize)
-
-    standard_out = sys.stdout
 
     ##Input
     data_file = "./sav_files/kn1d_test_inputs.sav"
@@ -50,16 +49,11 @@ def run():
     print("Elapsed Time: ", end - start)
     print()
 
-    output = Path("Results/output.txt").open("w")
-    sys.stdout = output
-
-    for key, value in asdict(results).items():
-        print(key)
-        print(value)
-        print()
-
-    output.close()
-    sys.stdout = standard_out
+    with Path("Results/output.txt").open("w") as output, redirect_stdout(output):
+        for key, value in asdict(results).items():
+            print(key)
+            print(value)
+            print()
 
 
 def run_lite():
