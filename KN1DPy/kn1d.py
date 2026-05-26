@@ -298,15 +298,15 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
     print(prompt+"Satisfaction condition: ", truncate)
 
 
-    iter = 0
+    counter = 0
     EH_hist = np.array([0.0])
     SI_hist = np.array([0.0])
     while True:
         # Iterates through solving fh and fh2 until they satisfy boltzmans equation
 
-        iter += 1
+        counter += 1
         if debrief:
-            print(prompt+'fH/fH2 Iteration: '+sval(iter))
+            print(prompt+'fH/fH2 Iteration: '+sval(counter))
         nH2_saved = nH2
 
         # interpolate fH data onto H2 mesh: fH -> fHM
