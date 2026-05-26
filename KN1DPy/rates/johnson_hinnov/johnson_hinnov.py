@@ -1,9 +1,11 @@
 import os
+
 import numpy as np
 from numpy.typing import NDArray
 from scipy import interpolate
 
-from ...utils import get_local_directory, bs2dr
+from ...utils import bs2dr, get_local_directory
+
 
 class Johnson_Hinnov():
     '''

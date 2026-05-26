@@ -1,13 +1,13 @@
-from dataclasses import asdict
-
-from KN1DPy.kn1d import kn1d
-from scipy.io import readsav
-import numpy as np
-
 import argparse
 import os
 import sys
 import time
+from dataclasses import asdict
+
+import numpy as np
+from scipy.io import readsav
+
+from KN1DPy.kn1d import kn1d
 
 
 def run():

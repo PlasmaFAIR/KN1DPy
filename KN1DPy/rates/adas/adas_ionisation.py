@@ -2,10 +2,11 @@
 New for the python version. Option to use the ADAS ionisation and recombination rates.
 '''
 
-import numpy as np
-from scipy.interpolate import RectBivariateSpline
 import os
 import urllib.request
+
+import numpy as np
+from scipy.interpolate import RectBivariateSpline
 
 ADAS_DIR = os.path.dirname(os.path.abspath(__file__))
 

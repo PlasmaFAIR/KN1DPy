@@ -1,15 +1,15 @@
-import numpy as np
-from numpy.typing import NDArray
-from scipy import interpolate
 from dataclasses import dataclass
 from typing import Optional
 
-from .make_dvr_dvx import VSpace_Differentials
-from .rates.johnson_hinnov.johnson_hinnov import Johnson_Hinnov
-from .kinetic_mesh import KineticMesh
-from .kinetic_h import KineticH
+import numpy as np
+from numpy.typing import NDArray
+from scipy import interpolate
 
 from .common import constants as CONST
+from .kinetic_h import KineticH
+from .kinetic_mesh import KineticMesh
+from .make_dvr_dvx import VSpace_Differentials
+from .rates.johnson_hinnov.johnson_hinnov import Johnson_Hinnov
 
 
 @dataclass

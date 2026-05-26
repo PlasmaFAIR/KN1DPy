@@ -1,21 +1,20 @@
-import numpy as np
-from numpy.typing import NDArray
-
-from scipy import interpolate
-from dataclasses import dataclass
 import os
-import tomli_w
+from dataclasses import dataclass
 
-from .create_shifted_maxwellian import create_shifted_maxwellian
-from .make_dvr_dvx import VSpace_Differentials
-from .utils import sval, interp_1d, get_config
-from .interp_fvrvxx import interp_fvrvxx
-from .rates.johnson_hinnov.johnson_hinnov import Johnson_Hinnov
-from .kinetic_mesh import KineticMesh
-from .kinetic_h import KineticH
-from .kinetic_h2 import KineticH2
+import numpy as np
+import tomli_w
+from numpy.typing import NDArray
+from scipy import interpolate
 
 from .common import constants as CONST
+from .create_shifted_maxwellian import create_shifted_maxwellian
+from .interp_fvrvxx import interp_fvrvxx
+from .kinetic_h import KineticH
+from .kinetic_h2 import KineticH2
+from .kinetic_mesh import KineticMesh
+from .make_dvr_dvx import VSpace_Differentials
+from .rates.johnson_hinnov.johnson_hinnov import Johnson_Hinnov
+from .utils import get_config, interp_1d, sval
 
 
 @dataclass

@@ -2,6 +2,7 @@ import numpy as np
 
 from ...utils import poly
 
+
 def sigmav_h2p_h2s_hh(Te):
     '''
     Returns maxwellian averaged <sigma V) for electron impact dissociation

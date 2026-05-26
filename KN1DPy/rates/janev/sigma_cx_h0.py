@@ -2,6 +2,7 @@ import numpy as np
 
 from ...utils import poly
 
+
 def sigma_cx_h0(E, freeman=False):
     '''
     Computes charge exchange cross section for atomic hydrogen. Data are taken either from the polynomial fit in

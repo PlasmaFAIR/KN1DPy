@@ -2,6 +2,7 @@ import numpy as np
 
 from ...utils import poly
 
+
 def sigma_cx_hh(E):
     '''
     Computes charge exchange cross section for molecular hydrogen. Data are taken the polynomial fit in
