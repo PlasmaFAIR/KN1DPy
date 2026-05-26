@@ -57,6 +57,7 @@ select = [
   "PT", # flake8-pytest-style
   "B", # flake8-bugbear
   "A", # flake8-builtins
+  "C4", # flake8-comprehensions
 ]
 ignore = [
   "E501", # Line too long
