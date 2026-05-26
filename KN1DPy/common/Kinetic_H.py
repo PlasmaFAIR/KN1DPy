@@ -122,7 +122,7 @@ class Kinetic_H_Internal:
         self.Alpha_H_H2 = None
         self.Alpha_H_P = None
         self.MH_H_sum = None
-        self.Delta_nHs = 0.0 
+        self.Delta_nHs = 0.0
         self.Sn = None
         self.Rec = None
 

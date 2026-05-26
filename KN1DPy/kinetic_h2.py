@@ -109,11 +109,11 @@ class KineticH2():
     The positive vx half of the atomic neutral distribution function is inputted at x(0)
     (with arbitrary normalization). The desired flux on molecules entering the slab geometry at
     x(0) is specified. Background profiles of plasma ions, (e.g., Ti(x), Te(x), n(x), vxi(x),...)
-    and atomic distribution function (fH) is inputted. (fH can be computed by procedure 
-    "Kinetic_H.pro".) Optionally, a molecular source profile (SH2(x)) is also inputted. 
-    The code returns the molecular hydrogen distribution function, fH2(vr,vx,x) for all 
-    vx, vr, and x of the specified vr,vx,x grid. The atomic (H) and ionic (P) hydrogen 
-    source profiles and the atomic source velocity distribution functions 
+    and atomic distribution function (fH) is inputted. (fH can be computed by procedure
+    "Kinetic_H.pro".) Optionally, a molecular source profile (SH2(x)) is also inputted.
+    The code returns the molecular hydrogen distribution function, fH2(vr,vx,x) for all
+    vx, vr, and x of the specified vr,vx,x grid. The atomic (H) and ionic (P) hydrogen
+    source profiles and the atomic source velocity distribution functions
     resulting from Franck-Condon reaction product energies of H are also returned.
 
     Since the problem involves only the x spatial dimension, all distribution functions
@@ -250,7 +250,7 @@ class KineticH2():
         # FH2BC_Input
         self._init_fh2bc_input()
 
-        # Determine Energy Space Differentials 
+        # Determine Energy Space Differentials
         self.Eaxis = (self.vth**2)*0.5*self.mu*CONST.H_MASS*(self.mesh.vr**2) / CONST.Q
         _Eaxis = np.append(self.Eaxis, 2*self.Eaxis[self.nvr - 1] - self.Eaxis[self.nvr - 2])
         Eaxis_mid = np.append(0.0, 0.5*( _Eaxis + np.roll(_Eaxis, -1) ))
@@ -277,7 +277,7 @@ class KineticH2():
 
     def run_procedure(self, fH: NDArray = None, SH2: NDArray = None, fH2: NDArray = None, nHP: NDArray = None, THP: NDArray = None) -> KH2Results:
         '''
-        Solves a 1-D spatial, 2-D velocity kinetic neutral transport 
+        Solves a 1-D spatial, 2-D velocity kinetic neutral transport
         problem for molecular hydrogen or deuterium (H2)
 
         Parameters
@@ -292,7 +292,7 @@ class KineticH2():
                 Molecular ion density profile (m^-3). If None, zero array is used
             THP : ndarray, defualt=None
                 Molecular ion temperature profile (m^-3). If None, array of 3.0 used
-            
+
         Returns
         -------
         KH2Results
@@ -350,7 +350,7 @@ class KineticH2():
         nvr, nvx, nx = self.nvr, self.nvx, self.nx
 
         # --- Initialize Inputs ---
-        
+
         if fH is None:
             fH = np.arange((nvr,nvx,nx))
         if fH2 is None:
@@ -387,7 +387,7 @@ class KineticH2():
             if self.mesh.PipeDia[k] > 0:
                 gamma_wall[:,:,k] = 2*self.mesh.vr / self.mesh.PipeDia[k]
 
-        
+
         # --- Iteration ---
 
         fH2, alpha_c, Beta_CX_sum, Swall_sum, collision_freqs, m_sums = self._run_iteration_scheme(fH2, nH2, nHP, THP, SH2, gamma_wall, Do_Alpha_CX, Do_Alpha_H2_P)
@@ -399,8 +399,8 @@ class KineticH2():
 
         if self.compute_errors:
             self._compute_final_errors(results, SH2, Beta_CX_sum, Swall_sum, m_sums, alpha_c, collision_freqs)
-            
-            
+
+
         # --- Save input Variables ---
 
         self.Input.fH_s = fH
@@ -410,7 +410,7 @@ class KineticH2():
         self.Input.THP_s = results.THP
         self.Input.ni_correct_s = self.ni_correct
 
-        
+
         self._debrief_msg("Finished", 0)
 
         return results
@@ -428,7 +428,7 @@ class KineticH2():
 
         nvr, nvx, nx = self.nvr, self.nvx, self.nx
 
-        # Set iteration Scheme 
+        # Set iteration Scheme
         fH2_iterate = False
         if self.COLLISIONS.H2_H2_EL or self.COLLISIONS.H2_P_CX or self.COLLISIONS.H2_H_EL or self.COLLISIONS.H2_P_EL or self.ni_correct:
             fH2_iterate = True
@@ -448,11 +448,11 @@ class KineticH2():
             if Do_Alpha_CX:
                 self._compute_alpha_cx(nHP, THP)
 
-            # Compute Alpha_H2_P for present Ti and ni (optionally correcting for nHP), 
+            # Compute Alpha_H2_P for present Ti and ni (optionally correcting for nHP),
             # if it is needed and has not already been computed with the present parameter
             if Do_Alpha_H2_P:
                 self._compute_alpha_h2_p(nHP)
-            
+
 
             # --- Compute Collision Frequency ---
 
@@ -460,7 +460,7 @@ class KineticH2():
             collision_freqs = self._compute_omega_values(fH2, nH2)
             # Total Collision Frequency
             alpha_c = self._compute_collision_frequency(collision_freqs, gamma_wall)
-            
+
             # Generate Coefficients
             meq_coeffs = self._compute_mesh_equation_coefficients(alpha_c, SH2)
 
@@ -476,11 +476,11 @@ class KineticH2():
             for k in range(nx-1,0,-1):
                 fH2G[:,self.vx_neg,k-1] = fH2G[:,self.vx_neg,k]*meq_coeffs.C[:,self.vx_neg,k] + meq_coeffs.G[:,self.vx_neg,k]
 
-            # Compute first-flight neutral density profile 
+            # Compute first-flight neutral density profile
             for k in range(nx):
                 NH2G[k,0] = np.sum(self.dvr_vol*(fH2G[:,:,k] @ self.dvx))
 
-            # Set total molecular neutral distribution function to first flight generation 
+            # Set total molecular neutral distribution function to first flight generation
             fH2 = np.copy(fH2G)
             nH2 = NH2G[:,0]
 
@@ -492,19 +492,19 @@ class KineticH2():
 
             # Compute needed results for iteration
             nH2, _, _, _, _, _, _, _, nHP, THP = self._compute_iteration_results(fH2)
-            
+
 
             # --- End Iteration ---
 
             if fH2_iterate:
-                # Compute 'seed error': Delta_nH2s=(|nH2s-nH2|)/max(nH2) 
+                # Compute 'seed error': Delta_nH2s=(|nH2s-nH2|)/max(nH2)
                 # If Delta_nH2s is greater than 10*truncate then iterate fH2
 
                 self.Internal.Delta_nH2s = np.max(np.abs(nH_input - nH2)) / np.max(nH2)
                 if self.Internal.Delta_nH2s <= 10*self.truncate:
                     break
-        
-        
+
+
         # --- Update Last Generation ---
 
         # Update Swall_sum using last generation
@@ -531,11 +531,11 @@ class KineticH2():
 
         nvr, nvx, nx = self.nvr, self.nvx, self.nx
         vxp, vxn = self.vx_pos, self.vx_neg
-        
+
         Swall_sum = np.zeros((nvr,nvx,nx))
         Beta_CX_sum = np.zeros((nvr,nvx,nx))
         m_sums = CollisionType(np.zeros((nvr,nvx,nx)), np.zeros((nvr,nvx,nx)), np.zeros((nvr,nvx,nx)))
-        
+
         igen = 0
         while True:
 
@@ -552,7 +552,7 @@ class KineticH2():
                 break
             igen += 1
             self._debrief_msg('Computing molecular neutral generation#'+sval(igen), 0)
-        
+
 
             #Compute Swall from previous generation
             Swall = self._compute_swall(fH2G, gamma_wall)
@@ -579,7 +579,7 @@ class KineticH2():
                 fH2G[:,vxn,k-1] = meq_coeffs.C[:,vxn,k]*fH2G[:,vxn,k] + meq_coeffs.D[:,vxn,k]*(Swall[:,vxn,k-1] + Beta_CX[:,vxn,k-1] + OmegaM[:,vxn,k-1] + Swall[:,vxn,k] + Beta_CX[:,vxn,k] + OmegaM[:,vxn,k])
             for k in range(nx):
                 NH2G[k,igen] = np.sum(self.dvr_vol*(fH2G[:,:,k] @ self.dvx))
-            
+
 
             # Add result to total neutral distribution function
             fH2 += fH2G
@@ -594,7 +594,7 @@ class KineticH2():
                 break
 
         return fH2, nH2, fH2G, NH2G, Swall_sum, Beta_CX_sum, m_sums, igen
-    
+
 
     def _compute_iteration_results(self, fH2):
         '''
@@ -613,29 +613,29 @@ class KineticH2():
 
         # VxH2 - x velocity
         VxH2 = GammaxH2 / nH2
-        VxH2_vth = VxH2 / self.vth 
+        VxH2_vth = VxH2 / self.vth
 
-        # Magnitude of random velocity at each mesh point 
+        # Magnitude of random velocity at each mesh point
         # vr2vx2_ran.shape = (self.nvr, self.nvx, self.nx)
         # vr2vx2_ran[i,j,k] = vr[i]**2 + (vx[j] - VxH2[k])**2
         vr2vx2_ran = self.mesh.vr[:,None,None]**2 + (self.mesh.vx[None,:,None] - VxH2_vth[None,None,:])**2
 
-        # pH2 - pressure 
+        # pH2 - pressure
         pH2 = np.zeros(self.nx)
         pH2_coef = (2*self.mu*CONST.H_MASS)*(self.vth**2) / (3*CONST.Q)
         for k in range(0, self.nx):
             pH2[k] = np.sum(self.dvr_vol*((vr2vx2_ran[:,:,k]*fH2[:,:,k]) @ self.dvx))
         pH2 *= pH2_coef
 
-        #TH2 - temperature 
+        #TH2 - temperature
         TH2 = pH2/nH2
 
-        # Compute NuDis - Dissociation frequency 
+        # Compute NuDis - Dissociation frequency
         NuDis = self.mesh.ne*np.sum(self.Internal.sigv[:,7:11], 1)
-        
+
         # Compute NuE (assume np=ne) - Energy equilibration frequency H(+) <-> H2(+)
         NuE = (7.7e-7*self.mesh.ne*1.0e-6)/(np.sqrt(self.mu)*(self.mesh.Ti**1.5))
-        
+
         # Compute H2(+) density profile
         nHP = (nH2*self.mesh.ne*self.Internal.sigv[:,1])/(NuDis + self.NuLoss)
 
@@ -643,7 +643,7 @@ class KineticH2():
         THP = (self.mesh.Ti*NuE)/(NuE + NuDis + self.NuLoss)
 
         return nH2, GammaxH2, VxH2, vr2vx2_ran, pH2, TH2, NuDis, NuE, nHP, THP
-    
+
 
     def _compile_results(self, fH2, SH2, gamma_wall, alpha_c, Beta_CX_sum, Swall_sum, collision_freqs, m_sums) -> KH2Results:
         '''
@@ -656,7 +656,7 @@ class KineticH2():
         # --- Recompute Results from end of iteration ---
 
         nH2, GammaxH2, VxH2, vr2vx2_ran, pH2, TH2, NuDis, NuE, nHP, THP = self._compute_iteration_results(fH2)
-        
+
 
         # --- Compute remaining moments ---
 
@@ -689,7 +689,7 @@ class KineticH2():
         for k in range(0, self.nx):
             C = self.vth*((self.Internal.fw_hat[:,:]*SH2[k]/self.vth) + Swall_sum[:,:,k] + Beta_CX_sum[:,:,k] - (alpha_c[:,:,k]*fH2[:,:,k])
                             + collision_freqs.H2_P[k]*m_sums.H2_P[:,:,k] + collision_freqs.H2_H[k]*m_sums.H2_H[:,:,k] + collision_freqs.H2_H2[k]*m_sums.H2_H2[:,:,k])
-            
+
             QH2[k] = E_coef*np.sum(dvr_vol*((vr2vx2_ran[:,:,k]*C) @ dvx))
             RxH2[k] = Rx_coef*np.sum(dvr_vol*(C @ (dvx*(vx - VxH2_vth[k]))))
             Sloss[k] = -np.sum(dvr_vol*(C @ dvx)) + SH2[k]
@@ -728,7 +728,7 @@ class KineticH2():
         QH2_total = QH2 + RxH2*VxH2 - 0.5*(2*self.mu*CONST.H_MASS)*(Sloss - SH2)*VxH2*VxH2
 
         # Albedo
-        gammax_plus = self.vth*np.sum(dvr_vol*(fH2[:,self.vx_pos,0] @ (vx[self.vx_pos]*dvx[self.vx_pos]))) 
+        gammax_plus = self.vth*np.sum(dvr_vol*(fH2[:,self.vx_pos,0] @ (vx[self.vx_pos]*dvx[self.vx_pos])))
         gammax_minus = self.vth*np.sum(dvr_vol*(fH2[:,self.vx_neg,0] @ (vx[self.vx_neg]*dvx[self.vx_neg])))
         AlbedoH2 = 0.0
         if np.abs(gammax_plus) > 0:
@@ -742,7 +742,7 @@ class KineticH2():
 
         results = KH2Results(fH2, nHP, THP, nH2, GammaxH2, VxH2, pH2, TH2, qxH2, qxH2_total, Sloss, QH2, RxH2, QH2_total, AlbedoH2, WallH2, fSH, SH, SP, SHP, NuE, NuDis, ESH, self.Eaxis)
         return results
-    
+
 
 
 
@@ -810,17 +810,17 @@ class KineticH2():
                 Alpha_H2_H2 = (self.Internal.SIG_H2_H2 @ Work).reshape((nvr,nvx), order='F')
                 Wpp = Wperp_paraH2[k]
                 MagWpp = np.maximum(abs(Wpp), self.Wpp_tol)
-                Wpp = np.sign(Wpp)*MagWpp  
-                Omega_H2_H2[k] = np.sum(self.dvr_vol*((Alpha_H2_H2*Work.reshape((nvr,nvx), order='F')) @ self.dvx))/(nH2[k]*Wpp) 
+                Wpp = np.sign(Wpp)*MagWpp
+                Omega_H2_H2[k] = np.sum(self.dvr_vol*((Alpha_H2_H2*Work.reshape((nvr,nvx), order='F')) @ self.dvx))/(nH2[k]*Wpp)
             Omega_H2_H2 = np.maximum(Omega_H2_H2, 0)
 
         return CollisionType(Omega_H2_H2, Omega_H2_P, Omega_H2_H)
-    
+
 
     def _compute_collision_frequency(self, collision_freqs, gamma_wall):
         '''
-        Computes total elastic scattering frequency (Eq. 2.15) 
-        and total collision frequency (Eq. 2.16) 
+        Computes total elastic scattering frequency (Eq. 2.15)
+        and total collision frequency (Eq. 2.16)
         '''
 
         # Total Elastic scattering frequency
@@ -831,7 +831,7 @@ class KineticH2():
         if self.COLLISIONS.H2_P_CX:
             for k in range(self.nx):
                 alpha_c[:,:,k] = self.Internal.Alpha_CX[:,:,k] + self.Internal.Alpha_Loss[k] + Omega_EL[k] + gamma_wall[:,:,k]
-        else: 
+        else:
             for k in range(0, self.nx):
                 alpha_c[:,:,k] = self.Internal.Alpha_Loss[k] + Omega_EL[k] + gamma_wall[:,:,k]
 
@@ -842,7 +842,7 @@ class KineticH2():
 
     def _compute_mesh_equation_coefficients(self, alpha_c, SH2):
         '''
-        Define parameters Ak, Bk, Ck, Dk, Fk, Gk using Eqs. (2.22), (2.25), (2.30), (2.33) 
+        Define parameters Ak, Bk, Ck, Dk, Fk, Gk using Eqs. (2.22), (2.25), (2.30), (2.33)
         '''
 
         Ak = np.zeros((self.nvr,self.nvx,self.nx))
@@ -864,9 +864,9 @@ class KineticH2():
                 Ck[:,j,k+1] = (-2*self.mesh.vx[j] - (x_diffs)*alpha_c[:,j,k+1]) / denom
                 Dk[:,j,k+1] = (x_diffs) / denom
                 Gk[:,j,k+1] = (x_diffs)*self.Internal.fw_hat[:,j]*(SH2[k+1]+SH2[k]) / (self.vth*denom)
-        
+
         return MeshEqCoefficients(Ak, Bk, Ck, Dk, Fk, Gk)
-    
+
 
     def _compute_swall(self, fH2G, gamma_wall):
         '''
@@ -878,11 +878,11 @@ class KineticH2():
 
             self._debrief_msg('Computing Swall', 1)
 
-            for k in range(0, self.nx): 
+            for k in range(0, self.nx):
                 Swall[:,:k] = self.Internal.fw_hat*np.sum(self.dvr_vol*((gamma_wall[:,:,k]*fH2G[:,:,k]) @ self.dvx))
-        
+
         return Swall
-    
+
 
     def _compute_beta_cx(self, fH2G, nHP):
         '''
@@ -897,9 +897,9 @@ class KineticH2():
             if self.COLLISIONS.Simple_CX:
                 # Option (B): Compute charge exchange source with assumption that CX source neutrals have  molecular ion distribution function
                 # Eq.(2.11b)
-                for k in range(0, self.nx): 
+                for k in range(0, self.nx):
                     Beta_CX[:,:,k] = self.Internal.fHp_hat[:,:,k]*np.sum(self.dvr_vol*((self.Internal.Alpha_CX[:,:,k]*fH2G[:,:,k]) @ self.dvx))
-            else: 
+            else:
                 # Option (A): Compute charge exchange source using fH2 and vr x sigma x v_v at each velocity mesh point
                 # Eq.(2.11a)
                 for k in range(0, self.nx):
@@ -907,20 +907,20 @@ class KineticH2():
                     Beta_CX[:,:,k] = nHP[k]*self.Internal.fHp_hat[:,:,k]*((self.Internal.SIG_CX @ Work).reshape((self.nvr,self.nvx), order='F'))
 
         return Beta_CX
-    
+
 
     def _compute_mh_values(self, fH2G, nH):
         '''
         Compute collision distributions using Eqs. (2.6)-(2.8)
         '''
-        
+
         MH2_H2 = np.zeros((self.nvr,self.nvx,self.nx))
         MH2_P = np.zeros((self.nvr,self.nvx,self.nx))
         MH2_H = np.zeros((self.nvr,self.nvx,self.nx))
         VxH2G = np.zeros(self.nx)
         TH2G = np.zeros(self.nx)
         if self.COLLISIONS.H2_H2_EL or self.COLLISIONS.H2_P_EL or self.COLLISIONS.H2_H_EL:
-            
+
             # Compute VxH2G, TH2G
             for k in range(0, self.nx):
                 VxH2G[k] = self.vth*np.sum(self.dvr_vol*(fH2G[:,:,k] @ (self.mesh.vx * self.dvx))) / nH[k]
@@ -936,7 +936,7 @@ class KineticH2():
                 MH2_H2 = Maxwell*nH
 
             if self.COLLISIONS.H2_P_EL:
-                
+
                 self._debrief_msg('Computing MH2_P', 1)
 
                 # Compute MH2_P
@@ -946,7 +946,7 @@ class KineticH2():
                 MH2_P = Maxwell*nH
 
             if self.COLLISIONS.H2_H_EL:
-                
+
                 self._debrief_msg('Computing MH2_H', 1)
 
                 #Compute MH2_H
@@ -956,7 +956,7 @@ class KineticH2():
                 MH2_H = Maxwell*nH
 
         return CollisionType(MH2_H2, MH2_P, MH2_H)
-    
+
 
 
 
@@ -972,7 +972,7 @@ class KineticH2():
         hydrogen products for a given reaction, accounting for the Franck-Condon energy
         distribution and accounting for additional velocity spreading due to the finite
         temperature of the molcules (neutral and ionic) prior to breakup:
-        
+
             f(Vr,Vx) = exp( -0.5*mH*mu*(|v|-Vfc+0.5*Tfc/Vfc)^2/(Tfc+0.5*Tmol) )
 
                 |v|=sqrt(Vr^2+Vx^2)
@@ -981,10 +981,10 @@ class KineticH2():
                     Tmol= temperature of H2 molecule (neutral or ionic)
 
         This function is isotropic in velocity space and can be written in terms
-        of a distribution in particle speed, |v|, 
+        of a distribution in particle speed, |v|,
 
             f(|v|) = exp( -(|v|-Vfc+1.5*Tfc/Vfc)^2/(Tfc+0.5*Tmol) )
-        
+
         with velocities normalized by vth and T normalized by Tnorm.
 
         Recognizing the the distribution in energy, f(E), and particle speed, f(|v|),
@@ -998,9 +998,9 @@ class KineticH2():
         (1) For Tmol/2 << Tfc,  the peak in the v^2 times the energy distribution, can be found
         by finding the |v| where df(E)/d|v| =0
 
-           df(E)/d|v|= 0 = 3v^2 exp() - 2(|v|-Vfc+1.5*Tfc/Vfc)/Tfc v^3 exp() 
+           df(E)/d|v|= 0 = 3v^2 exp() - 2(|v|-Vfc+1.5*Tfc/Vfc)/Tfc v^3 exp()
                            2(|v|-Vfc+1.5*Tfc/Vfc)/Tfc |v| = 3
-        
+
         which is satisfied when |v|=Vfc. Thus the energy-weighted energy distribution peaks
         at the velocity corresponding to the average Franck-Condon energy.
 
@@ -1025,7 +1025,7 @@ class KineticH2():
         if not self.compute_h_source:
             # Stop Computation, return 0 arrays
             return fSH, SH, SP, SHP, ESH
-        
+
         self._debrief_msg('Computing Velocity Distributions of H products...', 1)
 
         # Set SFCn values for reactions R2, R3, R4, R5, R6, R7, R8, R10
@@ -1033,12 +1033,12 @@ class KineticH2():
         Vfc = np.zeros((nvr,nvx,nx))
         Tfc = np.zeros((nvr,nvx,nx))
         magV = np.sqrt(self.Internal.vr2vx2)
-        
+
         # Generate Lookup Table
         nFC, Eave, Emax, Emin = self._generate_h_source_table()
 
         _THP = THP/self.mesh.Tnorm
-        _TH2 = TH2/self.mesh.Tnorm 
+        _TH2 = TH2/self.mesh.Tnorm
 
         Rn = np.array([2, 3, 4, 5, 6, 7, 8, 10])
         for reaction in Rn:
@@ -1056,17 +1056,17 @@ class KineticH2():
                 #	   is not included and assumed to be small)
                 arg = -(magV - Vfc + 1.5*Tfc/Vfc)**2 / (Tfc + 0.5*_TH2)
                 SFCn[:,:,:,ii] = np.exp(np.maximum(arg, -80))
-            else: 
+            else:
                 #   For R7, R8 and R10, the Franck-Condon 'mean energy' is taken equal to Eave
                 #	   and the 'temperature' corresponds to the sum of the Franck-Condon 'temperature', Tfc,
                 #          and the temperature of the H2(+) molecular ions, THP. (Note: directed molecular ion velocity
-                #	   is not included and assumed to be small)    
+                #	   is not included and assumed to be small)
                 arg = -(magV - Vfc + 1.5*Tfc/Vfc)**2 / (Tfc + 0.5*_THP)
                 SFCn[:,:,:,ii] = np.exp(np.maximum(arg, -80))
 
             for k in range(nx):
                 SFCn[:,:,k,ii] = SFCn[:,:,k,ii] / (np.sum(self.dvr_vol*(SFCn[:,:,k,ii] @ self.dvx)))
-        
+
 
         if self.compute_errors:
             self.Errors.vbar_error = np.zeros(nx)
@@ -1089,7 +1089,7 @@ class KineticH2():
         for k in range(nx):
 
             fSH[:,:,k] = SH_coef[k]*(2*fSH_calc(k,2) + 2*fSH_calc(k,3) + fSH_calc(k,4) + 2*fSH_calc(k,5) + 2*fSH_calc(k,6))
-            
+
             fSH[:,:,k] += self.mesh.ne[k]*nHP[k]*(fSH_calc(k,7) + fSH_calc(k,8) + 2*fSH_calc(k,10))
 
         # Compute total H and H(+) sources
@@ -1100,7 +1100,7 @@ class KineticH2():
         # Compute total HP source
         SHP = SH_coef*self.Internal.sigv[:,1]
 
-        # Compute energy distribution of H source 
+        # Compute energy distribution of H source
         for k in range(nx):
             ESH[:,k] = (self.Eaxis*fSH[:,self.vx_pos[0],k]*self.dvr_vol_h_order) / self.dEaxis
             ESH[:,k] = ESH[:,k] / np.max(ESH[:,k])
@@ -1124,7 +1124,7 @@ class KineticH2():
                 print(self.prompt, 'Maximum Normalized Source_error =', np.max(Source_Error))
 
         return fSH, SH, SP, SHP, ESH
-    
+
 
     def _generate_h_source_table(self):
         '''
@@ -1138,7 +1138,7 @@ class KineticH2():
 
         # Reaction R2: e + H2 -> e + H(1s) + H(1s)
         ii = nFC[2]
-        Eave[:,ii] = 3.0 
+        Eave[:,ii] = 3.0
         Emax[:,ii] = 4.25
         Emin[:,ii] = 2
 
@@ -1146,7 +1146,7 @@ class KineticH2():
         ii = nFC[3]
         Eave[:,ii] = 0.3
         Emax[:,ii] = 0.55
-        Emin[:,ii] = 0.0 
+        Emin[:,ii] = 0.0
 
         # Reaction R4:  e + H2 -> e + H(+) + H(1s) + e
         ii = nFC[4]
@@ -1166,27 +1166,27 @@ class KineticH2():
 
         # Reaction R5: e + H2 -> e + H*(2p) + H*(2s)
         ii = nFC[5]
-        Eave[:,ii] = 4.85 
+        Eave[:,ii] = 4.85
         Emax[:,ii] = 5.85
         Emin[:,ii] = 2.85
 
         # Reaction R6: e + H2 -> e + H(1s) + H*(n=3)
         ii = nFC[6]
-        Eave[:,ii] = 2.5 
-        Emax[:,ii] = 3.75 
-        Emin[:,ii] = 1.25 
+        Eave[:,ii] = 2.5
+        Emax[:,ii] = 3.75
+        Emin[:,ii] = 1.25
 
         # Reaction R7: e + H2(+) -> e + H(+) + H(1s)
         ii = nFC[7]
-        Eave[:,ii] = 4.3   
+        Eave[:,ii] = 4.3
         Emax[:,ii] = 4.3 + 2.1     # Note the max/min values here are a guess
         Emin[:,ii] = 4.3 - 2.1     # Note the max/min values here are a guess
 
         # Reaction R8: e + H2(+) -> e + H(+) + H*(n=2)
         ii = nFC[8]
-        Eave[:,ii] = 1.5 
+        Eave[:,ii] = 1.5
         Emax[:,ii] = 1.5 + 0.75     # Note the max/min values here are a guess
-        Emin[:,ii] = 1.5 - 0.75     # Note the max/min values here are a guess 
+        Emin[:,ii] = 1.5 - 0.75     # Note the max/min values here are a guess
 
         # Reaction R10: e + H2(+) -> H(1s) + H*(n>=2)
         ii = nFC[10]
@@ -1195,7 +1195,7 @@ class KineticH2():
         # (see page 62 in Janev, "Elementary Processes in Hydrogen-Helium Plasmas", Springer-Verlag, 1987)
         #   n=2   3    4    5    6
         R10rel = np.array([0.1, 0.45, 0.22, 0.12, 0.069])
-        for k in range(7, 11): 
+        for k in range(7, 11):
             R10rel = np.append(R10rel, 10/(k**3))
         En = 13.58/((2 + np.arange(9))**2) # Energy of Levels
 
@@ -1209,14 +1209,14 @@ class KineticH2():
 
         return nFC, Eave, Emax, Emin
 
-        
+
 
 
     # ------ Variable Functions ------
 
     # --- Initialization ---
-        
-    
+
+
     def _init_fh2bc_input(self):
         '''
         Computes fH2BC_input, used to scale molecular distribution function (fH2) to desired flux
@@ -1233,7 +1233,7 @@ class KineticH2():
             self.fH2BC = self.fH2BC_input
 
         return
-    
+
 
     def _init_static_internals(self, SH2_initial):
         '''
@@ -1260,7 +1260,7 @@ class KineticH2():
         vr, vx = self.mesh.vr, self.mesh.vx
 
         self._debrief_msg('Computing vr2vx2, vr2vx_vxi2, EH2_P', 1)
-    
+
         # Magnitude of total normalized v^2 at each mesh point
         # vr2vx2.shape = (self.nvr,self.nvx,self.nx)
         # vr2vx2[i,j,k] = vr[i]**2 + vx[j]**2, repeated over k
@@ -1285,7 +1285,7 @@ class KineticH2():
             self.Internal.fw_hat = _maxwell[:,:,0]
 
         return
-    
+
 
     def _init_protons(self):
         '''
@@ -1296,7 +1296,7 @@ class KineticH2():
         self.Internal.fi_hat = create_shifted_maxwellian(self.mesh.vr, self.mesh.vx, self.mesh.Ti, self.vxi, self.mu, 1, self.mesh.Tnorm)
 
         return
-    
+
 
     def _init_sigv(self):
         '''
@@ -1309,7 +1309,7 @@ class KineticH2():
 
         sigv = np.zeros((self.nx,11))
 
-        # Reaction R1:  e + H2 -> e + H2(+) + e 
+        # Reaction R1:  e + H2 -> e + H2(+) + e
         sigv[:,1] = sigmav_ion_hh(self.mesh.Te)
         if self.sawada:
             sigv[:,1] = sigv[:,1] * 3.7 / 2.0
@@ -1317,7 +1317,7 @@ class KineticH2():
         # Reaction R2:  e + H2 -> H(1s) + H(1s)
         sigv[:,2] = sigmav_h1s_h1s_hh(self.mesh.Te)
         if self.sawada:
-            # Construct Table 
+            # Construct Table
             Te_table = np.log([5,20,100])
             Ne_table = np.log([1e14,1e17,1e18,1e19,1e20,1e21,1e22])
             fctr_table = np.zeros((7, 3))
@@ -1328,7 +1328,7 @@ class KineticH2():
             _n = np.clip(self.mesh.ne, 1e14, 1e22)
             fctr = path_interp_2d(fctr_table, Ne_table, Te_table, np.log(_n), np.log(_Te))
             sigv[:,2] = (1.0 + fctr)*sigv[:,2]
-        
+
         # Reaction R3:  e + H2 -> e + H(1s) + H*(2s)
         sigv[:,3] = sigmav_h1s_h2s_hh(self.mesh.Te)
 
@@ -1356,12 +1356,12 @@ class KineticH2():
         sigv[:,10] = sigmav_h1s_hn_hp(self.mesh.Te)
 
         self.Internal.sigv = sigv
-        
+
         # Total H2 destruction rate (normalized by vth) = sum of reactions 1-6
         self.Internal.Alpha_Loss = self.mesh.ne*np.sum(sigv[:,1:7], axis = 1) / self.vth
 
         return
-    
+
 
     def _init_v_v2(self):
         '''
@@ -1404,7 +1404,7 @@ class KineticH2():
         self.Internal.Vr2pidVrdVx = np.tile(self.dvr_vol[None,None,:,None]*self.dvx[None,None,None,:], (self.nvr,self.nvx,1,1))
 
         return
-    
+
 
     def _init_sig_cx(self):
         '''
@@ -1420,21 +1420,21 @@ class KineticH2():
 
         # Set SIG_CX = vr' x Integral{v_v*sigma_cx} over theta=0,2pi times differential velocity space element Vr'2pidVr'*dVx'
         SIG_CX = np.zeros((self.nvr*self.nvx, self.nvr*self.nvx))
-        self.Internal.SIG_CX = (self.Internal.Vr2pidVrdVx*((_Sig @ self.dtheta).reshape(self.Internal.Vr2pidVrdVx.shape, order='F'))).reshape(SIG_CX.shape, order='F') 
+        self.Internal.SIG_CX = (self.Internal.Vr2pidVrdVx*((_Sig @ self.dtheta).reshape(self.Internal.Vr2pidVrdVx.shape, order='F'))).reshape(SIG_CX.shape, order='F')
 
         # SIG_CX is now vr' * sigma_cx(v_v) * v_v (intergated over theta) for all possible ([vr,vx],[vr',vx'])
 
         return
-    
+
 
     def _init_sig_h2_h2(self):
         '''
         Compute SIG_H2_H2 for present velocity space grid
         '''
-        
+
         self._debrief_msg('Computing SIG_H_H', 1)
 
-        # Compute sigma_H2_H2 * vr2_vx2 * v_v at all possible relative velocities 
+        # Compute sigma_H2_H2 * vr2_vx2 * v_v at all possible relative velocities
         _Sig = np.zeros((self.nvr*self.nvx*self.nvr*self.nvx, self.ntheta))
         _Sig[:] = (self.Internal.vr2_vx2*self.Internal.v_v*sigma_el_hh_hh(self.Internal.v_v2*(CONST.H_MASS*self.mu*(self.vth**2)/CONST.Q), vis = 1)/8.0).reshape(_Sig.shape, order='F')
 
@@ -1446,13 +1446,13 @@ class KineticH2():
         # SIG_H2_H2 is now vr' * sigma_H2_H2(v_v) * vr2_vx2 * v_v (intergated over theta) for all possible ([vr,vx],[vr',vx'])
 
         return
-    
+
 
     def _init_sig_h_h2(self):
         '''
         Compute SIG_H2_H for present velocity space grid
         '''
-        
+
         self._debrief_msg('Computing SIG_H2_H', 1)
 
         # Compute sigma_H2_H * v_v at all possible relative velocities
@@ -1461,22 +1461,22 @@ class KineticH2():
 
         # Note: using H energy here for cross-section tabulated as H -> H2
 
-        # Set SIG_H2_H = vr' x vx_vx x Integral{v_v * sigma_H2_H} over theta = 0, 
+        # Set SIG_H2_H = vr' x vx_vx x Integral{v_v * sigma_H2_H} over theta = 0,
         #   2pi times differential velocity space element Vr'2pidVr'*dVx
         SIG_H2_H = np.zeros((self.nvr*self.nvx, self.nvr*self.nvx))
         self.Internal.SIG_H2_H = (self.Internal.Vr2pidVrdVx*self.Internal.vx_vx*((_Sig @ self.dtheta).reshape(self.Internal.vx_vx.shape, order='F'))).reshape(SIG_H2_H.shape, order='F')
 
-        # SIG_H2_H is now vr' * vx_vx * sigma_H2_H(v_V) 
+        # SIG_H2_H is now vr' * vx_vx * sigma_H2_H(v_V)
         #   (integrated over theta) for all possible ([vr, vx], [vr', vx'])
 
         return
-    
+
 
     def _init_sig_h2_p(self):
         '''
         Compute SIG_H2_P for present velocity space grid
         '''
-        
+
         self._debrief_msg('Computing SIG_H2_P', 1)
 
         # Compute sigma_H2_P * v_v at all possible relative velocities
@@ -1485,16 +1485,16 @@ class KineticH2():
 
         # Note: using H energy here for cross-section tabulated as p -> H2
 
-        # Set SIG_H2_P = vr' x vx_vx x Integral{v_v * sigma_H2_P} over theta = 0, 
+        # Set SIG_H2_P = vr' x vx_vx x Integral{v_v * sigma_H2_P} over theta = 0,
         #   2pi times differential velocity space element Vr'2pidVr' * dVx
         SIG_H2_P = np.zeros((self.nvr*self.nvx, self.nvr*self.nvx))
         self.Internal.SIG_H2_P = (self.Internal.Vr2pidVrdVx*self.Internal.vx_vx*(_Sig @ self.dtheta).reshape(self.Internal.vx_vx.shape, order='F')).reshape(SIG_H2_P.shape, order='F')
 
-        # SIG_H2_P is now vr' * vx_vx * sigma_h2_P(v_v) * v_v (integrated over theta) 
+        # SIG_H2_P is now vr' * vx_vx * sigma_h2_P(v_v) * v_v (integrated over theta)
         #   for all possible ([vr, vx], [vr', vx'])
 
         return
-    
+
 
     # --- Procedural ---
 
@@ -1502,7 +1502,7 @@ class KineticH2():
         '''
         Determines which internal variables need to be recomputed based on changes in input across iterations
         '''
-        
+
         # Set flags to make use of previously computed local parameters
         New_fH = True
         if (self.Input.fH_s is not None) and np.array_equal(self.Input.fH_s, fH):
@@ -1518,7 +1518,7 @@ class KineticH2():
 
         New_ni_correct = True
         if (self.Input.ni_correct_s is not None) and (self.Input.ni_correct_s != self.ni_correct):
-            New_ni_correct = False 
+            New_ni_correct = False
 
 
         Do_Alpha_CX =   ((self.Internal.Alpha_CX is None) | New_HP_Seed) & self.COLLISIONS.H2_P_CX
@@ -1531,7 +1531,7 @@ class KineticH2():
         self.H_Moments.TH = np.full(self.nx, 1.0)
 
         if (New_fH) and (np.sum(fH) > 0.0):
-            self._compute_fh_moments(fH) 
+            self._compute_fh_moments(fH)
         if Do_Alpha_H2_H:
             self._compute_alpha_h_h2(fH)
         if New_H2_Seed:
@@ -1539,7 +1539,7 @@ class KineticH2():
             self.Internal.Delta_nH2s = 1.0
 
         return Do_Alpha_CX, Do_Alpha_H2_P
-    
+
 
     def _compute_fh_moments(self, fH):
         '''
@@ -1558,13 +1558,13 @@ class KineticH2():
             self.H_Moments.TH[k] = (self.mu*CONST.H_MASS)*(self.vth**2)*np.sum((self.dvr_vol*((vr2vx2_ran2*fH[:,:,k]) @ self.dvx))) / (3*CONST.Q*self.H_Moments.nH[k])
 
         return
-    
+
 
     def _compute_alpha_cx(self, nHP, THP):
         '''
         Compute charge exchange collision frequency (alpha_cx) using Eq.(2.10a) or (2.10b)
         '''
-        
+
         self._debrief_msg('Computing Alpha_CX', 1)
 
         # Set Maxwellian Molecular Ion Distribution Function (assumed to be drifting with ion velocity, vxi)
@@ -1572,7 +1572,7 @@ class KineticH2():
 
         if self.COLLISIONS.Simple_CX:
             # Option (B) : Use Maxwellian weighted <sigma v>
-            
+
             # THP/mu at each mesh point
             # THP_mu[i,j,k] = THP[k] / mu
             THP_mu = np.broadcast_to(THP[None,None,:]/self.mu, (self.nvr, self.nvx, self.nx))
@@ -1604,7 +1604,7 @@ class KineticH2():
         '''
 
         self._debrief_msg('Computing Alpha_H2_H', 1)
-        
+
         # Compute Alpha_H2_H for inputed fH, if it is needed and has not
         #   already been computed with the present input parameters
 
@@ -1614,13 +1614,13 @@ class KineticH2():
             self.Internal.Alpha_H2_H[:,:,k] = (self.Internal.SIG_H2_H @ Work).reshape(self.Internal.Alpha_H2_H[:,:,k].shape, order='F')
 
         return
-    
+
 
     def _compute_alpha_h2_p(self, nHP):
         '''
         Compute H2:P Elastic momentum transfer frequency using Eq.(2.12)
         '''
-        
+
         self._debrief_msg('Computing Alpha_H2_P', 1)
 
         ni = self.mesh.ne
@@ -1633,7 +1633,7 @@ class KineticH2():
             self.Internal.Alpha_H2_P[:,:,k] = (self.Internal.SIG_H2_P @ Work).reshape(self.Internal.Alpha_H2_P[:,:,k].shape, order='F')
 
         return
-    
+
 
 
 
@@ -1661,7 +1661,7 @@ class KineticH2():
         if self.debrief > 1:
             print(self.prompt, 'Computing Collision Operator, Mesh, and Moment Normalized Errors')
 
-        Sloss2 = self.vth*self.Internal.Alpha_Loss*results.nH2 
+        Sloss2 = self.vth*self.Internal.Alpha_Loss*results.nH2
         for k in range(0, self.nx):
             self.Errors.C_Error[k] = np.abs(results.Sloss[k] - Sloss2[k])/np.max(np.abs(np.array([results.Sloss[k], Sloss2[k]])))
 
@@ -1694,7 +1694,7 @@ class KineticH2():
                     else:
                         TH2_H2 = np.sum(self.dvr_vol*((self.Internal.vr2vx2[:,:,k]*m_sums.H2_H2[:,:,k]) @ self.dvx))
                     self.Errors.H2_H2_error[k,m] = np.abs(TfH2 - TH2_H2)/np.max(np.abs(np.array([TfH2, TH2_H2])))
-                
+
                 if self.COLLISIONS.H2_H_EL:
                     if m < 2:
                         TH2_H = np.sum(self.dvr_vol*(m_sums.H2_H[:,:,k] @ (self.dvx*(self.mesh.vx**m))))
@@ -1748,36 +1748,36 @@ class KineticH2():
                 norm = np.max(np.abs(np.array([self.Output.RxP_H2, RxCI_P_H2])))
                 CI_P_H2_error = np.zeros(self.nx)
                 for k in range(0, self.nx):
-                    CI_P_H2_error[k] = np.abs(self.Output.RxP_H2[k] - RxCI_P_H2[k])/norm 
+                    CI_P_H2_error[k] = np.abs(self.Output.RxP_H2[k] - RxCI_P_H2[k])/norm
 
                 print(self.prompt, 'Maximum normalized momentum transfer error in P -> H2 elastic BKG collision operator: ', sval(np.max(CI_P_H2_error)))
-            
+
             if self.COLLISIONS.H2_H_EL: # H -> H2 momentum transfer via full collision integral
                 RxCI_H_H2 = np.zeros(self.nx)
                 for k in range(0, self.nx):
                     RxCI_H_H2[k] = -(1/3)*(2*self.mu*CONST.H_MASS)*(self.vth**2)*np.sum(self.dvr_vol*((self.Internal.Alpha_H2_H[:,:,k]*results.fH2[:,:,k]) @ self.dvx))
-                
+
                 norm = np.max(np.abs(np.array([self.Output.RxH_H2, RxCI_H_H2])))
                 CI_H_H2_error = np.zeros(self.nx)
                 for k in range(0, self.nx):
                     CI_H_H2_error[k] = np.abs(self.Output.RxH_H2[k] - RxCI_H_H2[k])/norm
-                
+
                 print(self.prompt, 'Maximum normalized momentum transfer error in H -> H2 elastic BKG collision operator: ', sval(np.max(CI_H_H2_error)))
-            
+
             if self.COLLISIONS.H2_H2_EL: # H2 -> H2 perp/parallel energy transfer via full collision integral
                 Epara_Perp_CI = np.zeros(self.nx)
                 for k in range(0, self.nx):
                     Work = results.fH2[:,:,k].reshape((self.nvr*self.nvx), order='F')
                     Alpha_H2_H2 = (self.Internal.SIG_H2_H2 @ Work).reshape((self.nvr,self.nvx), order='F')
-                    Epara_Perp_CI[k] = 0.5*(2*self.mu*CONST.H_MASS)*(self.vth**3)*np.sum(self.dvr_vol*((Alpha_H2_H2*results.fH2[:,:,k]) @ self.dvx)) 
-                
+                    Epara_Perp_CI[k] = 0.5*(2*self.mu*CONST.H_MASS)*(self.vth**3)*np.sum(self.dvr_vol*((Alpha_H2_H2*results.fH2[:,:,k]) @ self.dvx))
+
                 norm = np.max(np.abs(np.array([self.Output.Epara_PerpH2_H2, Epara_Perp_CI])))
                 CI_H2_H2_error = np.zeros(self.nx)
                 for k in range(0, self.nx):
-                    CI_H2_H2_error[k] = np.abs(self.Output.Epara_PerpH2_H2[k] - Epara_Perp_CI[k])/norm 
-                
+                    CI_H2_H2_error[k] = np.abs(self.Output.Epara_PerpH2_H2[k] - Epara_Perp_CI[k])/norm
+
                 print(self.prompt, 'Maximum normalized perp/parallel energy transfer error in H2 -> H2 elastic BKG collision operator: ', sval(np.max(CI_H2_H2_error)))
-        
+
         # Mesh Point Error based on fH2 satisfying Boltzmann equation
         T1 = np.zeros((self.nvr,self.nvx,self.nx))
         T2 = np.zeros((self.nvr,self.nvx,self.nx))
@@ -1787,7 +1787,7 @@ class KineticH2():
         T6 = np.zeros((self.nvr,self.nvx,self.nx))
         for k in range(0, self.nx-1):
             for j in range(0, self.nvx):
-                T1[:,j,k] = 2*self.mesh.vx[j]*(results.fH2[:,j,k+1] - results.fH2[:,j,k])/(self.mesh.x[k+1] - self.mesh.x[k]) 
+                T1[:,j,k] = 2*self.mesh.vx[j]*(results.fH2[:,j,k+1] - results.fH2[:,j,k])/(self.mesh.x[k+1] - self.mesh.x[k])
             T2[:,:,k] = self.Internal.fw_hat[:,:]*(SH2[k+1] + SH2[k])/self.vth
             T3[:,:,k] = Beta_CX_sum[:,:,k+1] + Beta_CX_sum[:,:,k]
             T4[:,:,k] = alpha_c[:,:,k+1]*results.fH2[:,:,k+1] + alpha_c[:,:,k]*results.fH2[:,:,k]
@@ -1817,9 +1817,9 @@ class KineticH2():
         # qxH2_total2 total neutral heat flux profile (watts m^-2)
         #    This is the total heat flux transported by the neutrals
         #    computed in a different way from:
-        # 
+        #
         #    qxH2_total2(k)=vth3*total(Vr2pidVr*((vr2vx2(*,*,k)*fH2(*,*,k))#(Vx*dVx)))*0.5*(2*mu*mH)
-        # 
+        #
         #    This should agree with qxH2_total if the definitions of nH2, pH2, piH2_xx,
         #    TH2, VxH2, and qxH2 are coded correctly.
         qxH2_total2 = np.zeros(self.nx)
@@ -1909,7 +1909,7 @@ class KineticH2():
             raise Exception(self.prompt + " mu must be 1 or 2!")
         if np.sum(abs(self.mesh.vr)) <= 0.0:
             raise Exception(self.prompt + " vr is all 0!")
-        
+
         if np.size(self.vx_neg) < 1:
             raise Exception(self.prompt + " vx contains no negative elements!")
         if np.size(self.vx_pos) < 1:
@@ -1919,12 +1919,12 @@ class KineticH2():
         diff = np.argwhere(self.mesh.vx[self.vx_pos] != -np.flipud(self.mesh.vx[self.vx_neg]))
         if diff.size > 0:
             raise Exception(self.prompt + " vx array elements are not symmetric about zero!")
-        
+
         if np.sum(self.fH2BC_input) <= 0.0:
             raise Exception(self.prompt + " Values for fH2BC(:,:) with vx > 0 are all zero!")
 
         return
-    
+
 
     def _test_input_parameters(self, fH, fH2, SH2, nHP, THP):
         '''
@@ -1949,17 +1949,17 @@ class KineticH2():
             raise Exception(self.prompt + " Number of elements in nHP and x do not agree!")
         if np.size(THP) != self.nx:
             raise Exception(self.prompt + " Number of elements in THP and x do not agree!")
-        
+
         return
-    
+
 
     def _test_grid_spacing(self, alpha_c):
 
         # Test x grid spacing based on Eq.(2.27) in notes
-        if self.debrief > 1: 
+        if self.debrief > 1:
             print(self.prompt, 'Testing x grid spacing')
         self.Errors.Max_dx = np.full(self.nx, 1.0E32)
-        for k in range(0, self.nx) : 
+        for k in range(0, self.nx) :
             for j in self.vx_pos:
                 denom = alpha_c[:,j,k]
                 self.Errors.Max_dx[k] = np.minimum(self.Errors.Max_dx[k], np.min(2*self.mesh.vx[j]/denom))
@@ -1980,15 +1980,15 @@ class KineticH2():
                 out = out + str(ilarge[ii]) +' '+ str(self.mesh.x[ilarge[ii]+1]-self.mesh.x[ilarge[ii]]) +' '+ str(self.Errors.Max_dx[ilarge[ii]]) +' '
                 if jj > 4:
                     print(out)
-                    jj = 0 
+                    jj = 0
                     out = ''
-            if jj > 0: 
+            if jj > 0:
                 print(out)
-            raise Exception("x mesh spacing is too large") 
-        
+            raise Exception("x mesh spacing is too large")
+
         return
-        
-    
+
+
 
     # ------ Utility Methods ------
 

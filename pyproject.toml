@@ -52,6 +52,7 @@ where = ["."]
 select = [
   "F", # Pyflakes
   "E", # pycodestyle error
+  "W", # pycodestyle warning
 ]
 ignore = [
   "E501", # Line too long

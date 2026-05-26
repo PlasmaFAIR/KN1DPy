@@ -24,7 +24,7 @@ def _get_interpolation_bounds(a, b, a_name="a", b_name="b"):
     -------
         tuple : (int, int)
             start, end of the interpolation range
-    
+
     Raises
     -------
         Exception if interpolation range is 0
@@ -57,7 +57,7 @@ def _test_bounds(fb, test_bound : Bound, var_len, test_axis, iter_bound1 : Bound
             Acceptable truncation level
         var_name : str (optional)
             variable name for warning message
-    
+
     Issues
     -------
         Warning if 0 found at boundary edge
@@ -80,7 +80,7 @@ def _test_bounds(fb, test_bound : Bound, var_len, test_axis, iter_bound1 : Bound
             max_slice = fb[iter_slice1, iter_slice2, test_bound.end]
         else:
             raise Exception("Invalid test axis")
-        
+
         if (start_error == 0) and (test_bound.start > 0) and np.any(min_slice > do_warn*big):
             warn(f"Non-zero value of fb detected at min({var_name}) boundary")
         if (end_error == 0) and (test_bound.end < var_len-1) and np.any(max_slice > do_warn*big):
@@ -109,11 +109,11 @@ def interp_fvrvxx(fa: np.ndarray, mesh_a : KineticMesh, mesh_b : KineticMesh, do
                 a warning message is generated.
         debug : bool
             If True, generate debug statements
-            
+
     Returns
     -------
         fb : ndarray
-            Interpolated distribution function, scaled if necessary to make its 
+            Interpolated distribution function, scaled if necessary to make its
             digital integral over all velocity space equal to that of fa
             3D array of of shape (vrb, vxb, xb)
     '''
@@ -121,7 +121,7 @@ def interp_fvrvxx(fa: np.ndarray, mesh_a : KineticMesh, mesh_b : KineticMesh, do
     prompt = 'INTERP_FVRVXX => '
 
     v_scale = np.sqrt(mesh_b.Tnorm / mesh_a.Tnorm) # velocity ratio (scales velocities from mesh_a to mesh_b)
-    
+
     # Check shape agreement for fa
     if fa.shape != (mesh_a.vr.size, mesh_a.vx.size, mesh_a.x.size):
         raise Exception('fa (' + str(fa.shape) + ') does not have shape (vra, vxa, xa)' + str((mesh_a.vr.size, mesh_a.vx.size, mesh_a.x.size)))
@@ -140,7 +140,7 @@ def interp_fvrvxx(fa: np.ndarray, mesh_a : KineticMesh, mesh_b : KineticMesh, do
 
     vdiff_a = VSpace_Differentials(mesh_a.vr, mesh_a.vx)
     vdiff_b = VSpace_Differentials(mesh_b.vr, mesh_b.vx)
-    
+
 
     # --- Compute Weights ---
 
@@ -156,7 +156,7 @@ def interp_fvrvxx(fa: np.ndarray, mesh_a : KineticMesh, mesh_b : KineticMesh, do
                                 vdiff_a.vr_left_bound[np.newaxis, np.newaxis, :, np.newaxis])
     vr_max = np.minimum(v_scale*vdiff_b.vr_right_bound[:, np.newaxis, np.newaxis, np.newaxis],
                                 vdiff_a.vr_right_bound[np.newaxis, np.newaxis, :, np.newaxis])
-    
+
     vx_min = np.maximum(v_scale*vdiff_b.vx_left_bound[np.newaxis, :, np.newaxis, np.newaxis],
                                 vdiff_a.vx_left_bound[np.newaxis, np.newaxis, np.newaxis, :])
     vx_max = np.minimum(v_scale*vdiff_b.vx_right_bound[np.newaxis, :, np.newaxis, np.newaxis],
@@ -217,7 +217,7 @@ def interp_fvrvxx(fa: np.ndarray, mesh_a : KineticMesh, mesh_b : KineticMesh, do
                 continue
 
             while True:
-                
+
                 # --- Adjust fb for desired weights ---
 
                 fb[:,:,k], s = compensate_distribution(fb[:,:,k], vdiff_b, mesh_b.vr, mesh_b.vx, np.sqrt(mesh_b.Tnorm), target_vx[k], target_energy[k], nb=nb, assume_pos=False)
@@ -241,7 +241,7 @@ def interp_fvrvxx(fa: np.ndarray, mesh_a : KineticMesh, mesh_b : KineticMesh, do
     tot_a = np.zeros(mesh_a.x.size)
     for k in range(mesh_a.x.size):
         tot_a[k] = np.sum(vdiff_a.dvr_vol*(np.matmul(fa[:,:,k], vdiff_a.dvx)))
-        
+
     tot_b = np.zeros(mesh_b.x.size)
     tot_b[x_bound.slice(0,1)] = interp_1d(mesh_a.x, tot_a, mesh_b.x[x_bound.slice(0,1)], fill_value="extrapolate")
 

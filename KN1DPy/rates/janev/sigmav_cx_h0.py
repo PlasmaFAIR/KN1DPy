@@ -2,9 +2,9 @@ import numpy as np
 
 def sigmav_cx_h0(T, E):
     '''
-    Computes maxwellian averaged <sigma V) for charge exchange of atomic 
-    hydrogen. Coefficients are taken from 
-    
+    Computes maxwellian averaged <sigma V) for charge exchange of atomic
+    hydrogen. Coefficients are taken from
+
         Janev, "Elementary Processes in Hydrogen-Helium Plasmas",
         Springer-Verlag, 1987, p.272.
 
@@ -27,7 +27,7 @@ def sigmav_cx_h0(T, E):
 
     if T.size != E.size:
           raise Exception("number of elements of T and E are different!")
-    
+
     alpha = np.zeros((9,9))
 
     # Alpha indexing is reversed to match idl format
@@ -74,5 +74,5 @@ def sigmav_cx_h0(T, E):
         for j in range(9):
             # Using alpha[j,i] instead of alpha[i,j] since alpha is reversed
             result = result + alpha[j,i]*(Ei)*(alogT**j)
-    
+
     return np.exp(result)*1e-6

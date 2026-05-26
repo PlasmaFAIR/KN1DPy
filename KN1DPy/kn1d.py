@@ -50,7 +50,7 @@ class KN1DResults():
     # Combined
     GammaHLim: NDArray
 
- 
+
 
 def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
          truncate = 1.0e-3, max_gen = 100,
@@ -64,7 +64,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
     of Ti(x), Te(x), n(x), and molecular neutral pressure, GaugeH2, at the boundary using
     IDL routines Kinetic_H and Kinetic_H2. Molecular densities, ionization profiles,
     atomic densities and moments of the atomic distribution function, such as
-    T0(x), Qin(x), qx0_total(x),... are returned. 
+    T0(x), Qin(x), qx0_total(x),... are returned.
 
     It is assumed that molecular neutrals with temperature equal to the wall temperature
     (~ 1/40 eV) are attacking the plasma at x=x(0).
@@ -102,8 +102,8 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
         truncate : float, default=1.0e-3
             Convergence threshold for generations
                 fH and fH2 are refined by iteration via routines Kinetic_H2 and Kinetic_H
-                until the maximum change in molecular neutral density (over its profile) normalized to 
-                the maximum value of molecular density is less than this 
+                until the maximum change in molecular neutral density (over its profile) normalized to
+                the maximum value of molecular density is less than this
                 value in a subsequent iteration.
         max_gen : int, default=50
             Maximum number of collision generations to try including before giving up.
@@ -129,8 +129,8 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
             - GammaxH: ndarray(nxH), Neutral flux profile (# m^-2 s^-1)
             - TH: ndarray(nxH), Atomic neutral temperature profile (m^-3)
             - qxH_total: ndarray(nxH), Atomic neutral heat flux profile (watts m^-2)
-            - NetHSource: ndarray(nxH), Net source of atomic neutrals from molecular dissociation and recomb minus ionization (# m^-3) 
-            - Sion: ndarray(nxH), Atomic ionization rate (# m^-3) 
+            - NetHSource: ndarray(nxH), Net source of atomic neutrals from molecular dissociation and recomb minus ionization (# m^-3)
+            - Sion: ndarray(nxH), Atomic ionization rate (# m^-3)
             - QH_total: ndarray(nxH), Net rate of total energy transfer to atomic neutral species (watts m^-3)
             - SideWallH: ndarray(nxH), Atomic neutral sink rate arising from hitting the 'side walls' (m^-3 s^-1)
                     Unlike the molecules in Kinetic_H2, wall collisions result in the destruction of atoms.
@@ -138,7 +138,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
                     neutrals in Kinetic_H2. (molecular source = 2 times SideWallH)
             - Lyman: ndarray(nxH), Lyman-alpha emissivity (watts m^-3) using rate coefficients of L.C.Johnson and E. Hinnov
             - Balmer: ndarray(nxH), Balmer-alpha emissivity (watts m^-3) using rate coefficients of L.C.Johnson and E. Hinnov
-    
+
         Combined
             - GammaHLim: float, 2*GammaxH2 + GammaxH at edge of limiter (# m^-2 s^-1)
     '''
@@ -146,7 +146,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
     prompt = 'KN1D => '
 
     # --- Validate Config Options ---
-    
+
     valid_ion_rates = ['collrad', 'jh', 'janev', 'adas']
     cfg = get_config(config_path)
     ion_rate_option = cfg['kinetic_h']['ion_rate']
@@ -157,7 +157,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
     if ion_rate_option not in valid_ion_rates:
         raise Exception(prompt+"Invalid Ionization Rate Option used: '"+ion_rate_option+"', check config.toml")
 
-    
+
     # --- Generate Meshes ---
 
     # Determine optimized vr, vx, grid for kinetc_h2 (molecules, M)
@@ -181,15 +181,15 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
 
 
     # --- Initialize variables ---
-    
+
     # Initialize fH and fH2
-    
+
     fH = np.zeros((kh_mesh.vr.size,kh_mesh.vx.size,kh_mesh.x.size))
     fH2 = np.zeros((kh2_mesh.vr.size,kh2_mesh.vx.size,kh2_mesh.x.size))
     nH2 = np.zeros(kh2_mesh.x.size)
     nHP = np.zeros(kh2_mesh.x.size)
     THP = np.zeros(kh2_mesh.x.size)
-        
+
     # Directed random velocity of diatomic molecule
     v0_bar = np.sqrt((8.0*CONST.TWALL*CONST.Q) / (np.pi*2*mu*CONST.H_MASS))
     # Set up molecular flux BC from inputted neutral pressure
@@ -210,17 +210,17 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
         if LC[ii] > 0:
             Cs_LC[ii] = np.sqrt(CONST.Q*(Ti[ii] + Te[ii]) / (mu*CONST.H_MASS)) / LC[ii]
     NuLoss = interp_1d(x, Cs_LC, kh2_mesh.x)
-    
+
 
     #  Compute first guess SpH2
     #_____________________________________________________________________________________________________________
     #   If plasma recycling accounts for molecular source, then SpH2 = 1/2 n Cs/LC (1/2 accounts for H2 versus H)
     #   But, allow for SpH2 to be proportional to this function:
-    #      SpH2 = beta n Cs/LC 
+    #      SpH2 = beta n Cs/LC
     #   with beta being an adjustable parameter, set by achieving a net H flux of zero onto the wall.
     #   For first guess of beta, set the total molecular source according to the formula
     #
-    # (See notes "Procedure to adjust the normalization of the molecular source at the 
+    # (See notes "Procedure to adjust the normalization of the molecular source at the
     #   limiters (SpH2) to attain a net zero atom/molecule flux from wall")
     #
     #	Integral{SpH2}dx =  (2/3) GammaxH2BC = beta Integral{n Cs/LC}dx
@@ -287,7 +287,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
                          compute_errors=compute_errors, debrief=Hdebrief, debug=Hdebug,
                          config_path=config_path,
                          return_gen0=return_gen0, return_all_generations=return_all_generations)
-    
+
     kinetic_h2 = KineticH2(kh2_mesh, mu, vxiM, fh2BC, GammaxH2BC, NuLoss, SH2,
                             compute_h_source=True, ni_correct=True, truncate=truncate, max_gen=max_gen,
                             compute_errors=compute_errors, debrief=H2debrief, debug=H2debug,
@@ -318,7 +318,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
         # --- Run kinetic_h2 ---
 
         kh2_results = kinetic_h2.run_procedure(fHM, SH2, fH2, nHP, THP)
-        
+
         fH2 = kh2_results.fH2
         nHP = kh2_results.nHP
         THP = kh2_results.THP
@@ -327,7 +327,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
 
         # Interpolate H2 data onto H mesh: fH2 -> fH2A, fSH -> fSHA, nHP -> nHPA, THP -> THPA
         do_warn = 5.0E-3
-        fH2A = interp_fvrvxx(fH2, kh2_mesh, kh_mesh, do_warn=do_warn, debug=interp_debug) 
+        fH2A = interp_fvrvxx(fH2, kh2_mesh, kh_mesh, do_warn=do_warn, debug=interp_debug)
         fSHA = interp_fvrvxx(kh2_results.fSH, kh2_mesh, kh_mesh, do_warn=do_warn, debug=interp_debug) #NOTE return value here not correct, see _Wxa calculation, set debug_flag
 
         nHPA = np.interp(kh_mesh.x, kh2_mesh.x, nHP, left=0, right=0)
@@ -337,7 +337,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
         # --- Run kinetic_h ---
 
         kh_results = kinetic_h.run_procedure(fH2A, fSHA, fH, nHPA, THPA)
-        
+
         fH = kh_results.fH
 
 
@@ -345,7 +345,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
         SideWallHM = np.interp(kh2_mesh.x, kh_mesh.x, kh_results.SideWallH, left=0, right=0)
 
         # Adjust SpH2 to achieve net zero hydrogen atom/molecule flux from wall
-        # (See notes "Procedure to adjust the normalization of the molecular source at the 
+        # (See notes "Procedure to adjust the normalization of the molecular source at the
         # limiters (SpH2) to attain a net zero atom/molecule flux from wall")
 
         # Compute SI, GammaH2Wall_minus, and GammaHWall_minus
@@ -366,8 +366,8 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
         nEH = np.abs(EH) / np.max(np.abs(np.array([2*kh2_results.GammaxH2[0], GammaHWall_minus] )))
         if debrief and compute_errors:
             print(prompt, 'Normalized Hydrogen Flux Error: ', sval(nEH))
-        
-        # Compute Adjustment 
+
+        # Compute Adjustment
         Delta_SI = -EH/dEHdSI
         SI = SI + Delta_SI
 
@@ -385,17 +385,17 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
             nDRx = np.max(np.abs(DRx)) / np.max(np.abs(np.array([_RxH_H2, kinetic_h.Output.RxH2_H])))
             if debrief:
                 print(prompt, 'Normalized H2 <-> H Momentum Transfer Error: ', sval(nDRx))
-                
-        
+
+
         Delta_nH2 = np.abs(kh2_results.nH2 - nH2_saved)
         nDelta_nH2 = np.max(Delta_nH2/np.max(kh2_results.nH2))
-        if debrief: 
+        if debrief:
             print(prompt, 'Maximum Normalized change in nH2: ', sval(nDelta_nH2))
 
         if nDelta_nH2 <= truncate:
             # Stop Iteration
             break
-    
+
     # --- End Iteration ---
 
     #NOTE Add gammaHLim
@@ -404,7 +404,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
     GammaHLim = interp_1d(kh_mesh.x, gam, xlimiter)
 
 
-    
+
     # --- Compute Lyman and Balmer Alpha ---
 
     Lyman = jh.lyman_alpha(kh_mesh.ne, kh_mesh.Te, kh_results.nH, no_null=1)
@@ -526,10 +526,10 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
         tomli_w.dump(config_snapshot, f)
 
     # Format Results into Dataclass
-    results = KN1DResults(kh2_mesh.x, 
-                          kh2_results.nH2, 
-                          kh2_results.GammaxH2, 
-                          kh2_results.TH2, 
+    results = KN1DResults(kh2_mesh.x,
+                          kh2_results.nH2,
+                          kh2_results.GammaxH2,
+                          kh2_results.TH2,
                           kh2_results.qxH2_total,
                           kh2_results.nHP,
                           kh2_results.THP,

@@ -91,8 +91,8 @@ def kn1d_lite(
         Default [1.0].
 
     # NOTE
-    The default is that all the neutrals enter with 3eV. 
-    An input of energies_eV=[3, 10] and fractions=[0.7, 0.3] would mean that 70% of the incident neutrals have 3eV and 30% have 10eV.  
+    The default is that all the neutrals enter with 3eV.
+    An input of energies_eV=[3, 10] and fractions=[0.7, 0.3] would mean that 70% of the incident neutrals have 3eV and 30% have 10eV.
     If velocities_ms is given instead, those speeds are used directly (and energies_eV is ignored).
 
     Advanced mode (arbitrary distribution function)

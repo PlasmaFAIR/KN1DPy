@@ -3,8 +3,8 @@ import numpy as np
 def sigmav_rec_h1s(Te):
     '''
     Returns maxwellian averaged <sigma V) for electron-ion radiative recombination
-    to the atomic hydrogen in the 1s state. Coefficients are taken from 
-    
+    to the atomic hydrogen in the 1s state. Coefficients are taken from
+
         Janev, "Elementary Processes in Hydrogen-Helium Plasmas",
         Springer-Verlag, 1987, p.32.
 
@@ -20,7 +20,7 @@ def sigmav_rec_h1s(Te):
     '''
 
     Te = np.asarray(Te)
-    
+
     # Ensure 0.1 < Te < 2.01e4
     Te = np.clip(Te, 0.1, 2.01e4)
 

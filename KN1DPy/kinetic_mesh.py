@@ -35,7 +35,7 @@ class KineticMesh:
         Te : ndarray
             electron temperature profile interpolated over x
         ne : ndarray
-            density profile interpolated over x  
+            density profile interpolated over x
         PipeDia : ndarray
             effective pipe diameter interpolated over x
         Tnorm : float
@@ -69,8 +69,8 @@ class KineticMesh:
 
         if mesh_type == 'h':
             # Estimate total reaction rate for destruction of hydrogen atoms and for interation with side walls
-            react_rate = n*sigmav_ion_h0(Te) 
-            # Set v0 to thermal speed to 10 eV neutral 
+            react_rate = n*sigmav_ion_h0(Te)
+            # Set v0 to thermal speed to 10 eV neutral
             v0 = np.sqrt(2*10*CONST.Q / (mu*CONST.H_MASS))
 
         elif mesh_type == 'h2':
@@ -85,7 +85,7 @@ class KineticMesh:
 
         # Determine x range for atoms by finding distance into plasma where density persists.
         y = np.zeros(np.size(x), float)
-        for k in range(1, np.size(x)): 
+        for k in range(1, np.size(x)):
             y[k] = y[k-1] - ((x[k] - x[k-1])*0.5*(react_rate[k] + react_rate[k-1]))/v0
         if mesh_type == 'h':
             # Find x location where Y = -5, i.e. where nH should be down by exp(-5)
@@ -97,7 +97,7 @@ class KineticMesh:
         xmin = x[0]
 
 
-        # Interpolate Ti and Te onto a fine mesh between xmin and xmax 
+        # Interpolate Ti and Te onto a fine mesh between xmin and xmax
         xfine = xmin + (xmax - xmin)*np.arange(1001)/1000
         xfine = np.clip(xfine, xmin, max(x)) # prevents numerical issues with interpolation outside of x range
 
@@ -107,7 +107,7 @@ class KineticMesh:
         PipeDiafine = interp_1d(x, PipeDia, xfine)
 
 
-        # Set up a vx, vr mesh based on raw data to get typical vx, vr values 
+        # Set up a vx, vr mesh based on raw data to get typical vx, vr values
         vx, vr, Tnorm = self.create_vr_vx_mesh(nv, Tifine, E0=E0)
 
         vth = np.sqrt( (2*CONST.Q*Tnorm) / (mu*CONST.H_MASS))
@@ -117,8 +117,8 @@ class KineticMesh:
         for k in range(nxfine):
             if PipeDiafine[k] > 0:
                 gamma_wall[k] = 2 * max(vr) * vth / PipeDiafine[k]
-        
-        # Estimate total reaction rate, including charge exchange and elastic scattering, and interaction with side walls 
+
+        # Estimate total reaction rate, including charge exchange and elastic scattering, and interaction with side walls
         if mesh_type == 'h':
             minVr = vth*min(vr)
             minE0 = 0.5*CONST.H_MASS*(minVr**2) / CONST.Q
@@ -136,14 +136,14 @@ class KineticMesh:
 
         elif mesh_type == 'h2':
             react_rate = nfine*(sigmav_ion_hh(Tefine) + sigmav_h1s_h1s_hh(Tefine) + sigmav_h1s_h2s_hh(Tefine) + 0.1*sigmav_cx_hh(Tifine,Tifine)) + gamma_wall
-        
+
         # Compute local maximum grid spacing dx_max = 2
         dx_max = np.minimum(fctr*0.8*(2*vth*min(vr)/react_rate), 0.02*fctr)
 
-        # Construct xH Axis 
+        # Construct xH Axis
         xpt = xmax
         xH = np.array([xpt])
-        
+
         while xpt > xmin:
             xH = np.concatenate([np.array([xpt]), xH])
             dxpt1 = interp_1d(xfine, dx_max, xpt, fill_value="extrapolate")
@@ -154,7 +154,7 @@ class KineticMesh:
 
             dxpt = min([dxpt1, dxpt2])
 
-            xpt -= dxpt 
+            xpt -= dxpt
         xH = np.concatenate([np.array([xmin]), xH[0:np.size(xH) - 1]])
 
 
@@ -178,9 +178,9 @@ class KineticMesh:
 
 
     def create_vr_vx_mesh(self, nv: int, Ti: NDArray, E0: NDArray = np.array([0.0]), Tmax: float = 0.0) -> tuple[NDArray, NDArray, float] :
-        # Gwendolyn Galleher 
+        # Gwendolyn Galleher
         '''
-        Sets up optimum Vr and Vx velocity space mesh for Kinetic_Neutrals procedure 
+        Sets up optimum Vr and Vx velocity space mesh for Kinetic_Neutrals procedure
 
         Parameters
         ----------
@@ -192,7 +192,7 @@ class KineticMesh:
                 energy where a velocity is desired (optional)
             Tmax : float
                 maximum temperature, ignore Ti above this value
-                
+
         Returns
         -------
             vr: ndarray
@@ -203,12 +203,12 @@ class KineticMesh:
                 average of Ti
         '''
 
-        Ti = np.array(Ti) 
+        Ti = np.array(Ti)
         Ti = np.concatenate([Ti, E0[E0>0]])
         if Tmax > 0:
             ii = np.where(Ti < Tmax)
             Ti = Ti[ii]
-        
+
         maxTi = Ti.max()
         minTi = Ti.min()
         Tnorm = np.nanmean(Ti)
@@ -220,7 +220,7 @@ class KineticMesh:
             b = vmax / (nv*(nv + g))
             v = (g*b)*np.arange(nv+1) + b*(np.arange(nv+1)**2)
 
-        # Option: add velocity bins corresponding to E0     
+        # Option: add velocity bins corresponding to E0
         v0 = 0
         for k in range(np.size(E0)):
             if E0[k] > 0.0:
@@ -228,11 +228,11 @@ class KineticMesh:
                 ii = np.argwhere(v > v0).T[0]
                 if np.size(ii) > 0:
                     v = np.concatenate([v[0:ii[0]], [v0], v[ii[0]:]])
-                else: 
+                else:
                     v = np.concatenate([v, v0])
-            
+
         vr = v[1:]
-        vx = np.concatenate([-reverse(vr), vr]) 
+        vx = np.concatenate([-reverse(vr), vr])
 
         return vx,vr,Tnorm
 
