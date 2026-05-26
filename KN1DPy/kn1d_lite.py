@@ -183,7 +183,7 @@ def kn1d_lite(
 
     if simple_mode:
         GammaxHBC = 0.0
-        for frac, v_ms in zip(fractions, component_vs):
+        for frac, v_ms in zip(fractions, component_vs, strict=False):
             v_norm = v_ms / vth
             ix = int(np.argmin(np.abs(kh_mesh.vx - v_norm)))
             fHBC[0, ix] += (frac * incident_n0) / (kh_differentials.dvr_vol[0] * kh_differentials.dvx[ix])

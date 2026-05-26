@@ -51,11 +51,14 @@ class KineticMesh:
             n           : NDArray,
             PipeDia     : NDArray,
             jh          : Johnson_Hinnov = None,
-            E0          : NDArray = np.array([0.0]),
+            E0          : NDArray | None = None,
             fctr        : float   = None,
             config_path : str     = './config.toml'):
 
         print("generating kinetic_" + mesh_type + "_mesh")
+
+        if E0 is None:
+            E0 = np.array([0.0])
 
         #Get mesh size from config file
         cfg = get_config(config_path)
@@ -176,7 +179,7 @@ class KineticMesh:
         self.Tnorm : float = Tnorm
 
 
-    def create_vr_vx_mesh(self, nv: int, Ti: NDArray, E0: NDArray = np.array([0.0]), Tmax: float = 0.0) -> tuple[NDArray, NDArray, float] :
+    def create_vr_vx_mesh(self, nv: int, Ti: NDArray, E0: NDArray | None = None, Tmax: float = 0.0) -> tuple[NDArray, NDArray, float] :
         # Gwendolyn Galleher
         '''
         Sets up optimum Vr and Vx velocity space mesh for Kinetic_Neutrals procedure
@@ -201,6 +204,9 @@ class KineticMesh:
             Tnorm
                 average of Ti
         '''
+
+        if E0 is None:
+            E0 = np.array([0.0])
 
         Ti = np.array(Ti)
         Ti = np.concatenate([Ti, E0[E0>0]])
