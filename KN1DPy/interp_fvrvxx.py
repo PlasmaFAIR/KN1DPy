@@ -227,7 +227,7 @@ def interp_fvrvxx(fa: np.ndarray, mesh_a : KineticMesh, mesh_b : KineticMesh, do
 
     # --- Test Boundaries ---
 
-    if do_warn != None:
+    if do_warn is not None:
         # vr_bound
         _test_bounds(fb, vr_bound, mesh_b.vr.size, 0, vx_bound, x_bound, do_warn, var_name="Vra")
         # vx_bound

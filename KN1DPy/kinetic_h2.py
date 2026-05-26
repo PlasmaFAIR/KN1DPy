@@ -975,10 +975,10 @@ class KineticH2():
         
             f(Vr,Vx) = exp( -0.5*mH*mu*(|v|-Vfc+0.5*Tfc/Vfc)^2/(Tfc+0.5*Tmol) )
 
-              	|v|=sqrt(Vr^2+Vx^2)
-        	        Tfc= Franck-Condon 'temperature' = (Emax-Emin)/4
-        	        Vfc= Franck-Condon  velocity = sqrt(2 Eave/mH/mu)
-        		    Tmol= temperature of H2 molecule (neutral or ionic)
+                |v|=sqrt(Vr^2+Vx^2)
+                    Tfc= Franck-Condon 'temperature' = (Emax-Emin)/4
+                    Vfc= Franck-Condon  velocity = sqrt(2 Eave/mH/mu)
+                    Tmol= temperature of H2 molecule (neutral or ionic)
 
         This function is isotropic in velocity space and can be written in terms
         of a distribution in particle speed, |v|, 
@@ -1006,7 +1006,7 @@ class KineticH2():
 
         (2) for Tmol/2 >> Tfc ~ Vfc^2, the velocity distribution becomes
 
-        	f(|v|) = exp( -2(|v|-Vfc+1.5*Tfc/Vfc)^2/Tmol )
+            f(|v|) = exp( -2(|v|-Vfc+1.5*Tfc/Vfc)^2/Tmol )
 
         which leads to a velocity distribution that approaches the molecular velocity
         distribution with the magnitude of the average velocity divided by 2. This
@@ -1085,7 +1085,7 @@ class KineticH2():
         # Compute atomic hydrogen source distribution function
         # using normalized FC source distributions SFCn
         SH_coef = self.mesh.ne*nH2
-        fSH_calc = lambda k,x : self.Internal.sigv[k,x]*SFCn[:,:,k,nFC[x]]
+        fSH_calc = lambda k,x : self.Internal.sigv[k,x]*SFCn[:,:,k,nFC[x]]  # noqa: E731
         for k in range(nx):
 
             fSH[:,:,k] = SH_coef[k]*(2*fSH_calc(k,2) + 2*fSH_calc(k,3) + fSH_calc(k,4) + 2*fSH_calc(k,5) + 2*fSH_calc(k,6))

@@ -248,7 +248,7 @@ class KineticH():
 
         # Setup Johnson-Hinov
         self.jh = jh
-        if (jh == None) and (self.ion_rate_option == "jh"):
+        if (jh is None) and (self.ion_rate_option == "jh"):
             self.jh = Johnson_Hinnov()
 
 

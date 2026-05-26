@@ -19,8 +19,8 @@ def sigma_cx_h0(E, freeman=False):
             Freeman, E.L., Jones, E.M., "Atomic Collision Processes in Plasma Physics
             Experiments", UKAEA Report No. CLM-R137 (Culham Laboratory, Abington, England 1974).
             Otherwise, return CX based on polynomial fit in
-		    Janev, "Elementary Processes in Hydrogen-Helium Plasmas", 
-	        Springer-Verlag, 1987, p.250, other
+            Janev, "Elementary Processes in Hydrogen-Helium Plasmas",
+            Springer-Verlag, 1987, p.250, other
 
     Returns
     -------

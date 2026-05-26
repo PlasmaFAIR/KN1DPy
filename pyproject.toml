@@ -51,4 +51,8 @@ where = ["."]
 [tool.ruff.lint]
 select = [
   "F", # Pyflakes
+  "E", # pycodestyle error
+]
+ignore = [
+  "E501", # Line too long
 ]

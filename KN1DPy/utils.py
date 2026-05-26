@@ -247,7 +247,7 @@ def reverse(a, subscript=1):
     b = a
 
     #if the 1st variable is also a list then a dimension is added, recurring until no longer true
-    while type(b[0]) == list:
+    while type(b[0]) is list:
         ndims += 1
         if len(b) == 0:
             break

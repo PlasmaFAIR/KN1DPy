@@ -236,16 +236,16 @@ class Johnson_Hinnov():
         
         Parameters
         ----------
-         	Density : ndarray
+            Density : ndarray
                 electron density (=hydrogen ion density) (m^-3)
-         	Te : ndarray
+            Te : ndarray
                 electron temperature (eV)
-         	N0 : ndarray
+            N0 : ndarray
                 ground state neutral density (m^-3)
-        	no_null : bool, default=false
+            no_null : bool, default=false
                 if true, then rather than generate a NULL value when Density and Te
                 are not null but still outside the data range, compute the rate based on the min or max
-        		data range values.
+                data range values.
         '''
         
         # From Johnson-Hinnov, eq (11):
