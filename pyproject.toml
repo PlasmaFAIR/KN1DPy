@@ -56,6 +56,7 @@ select = [
   "I", # isort
   "PT", # flake8-pytest-style
   "B", # flake8-bugbear
+  "A", # flake8-builtins
 ]
 ignore = [
   "E501", # Line too long
