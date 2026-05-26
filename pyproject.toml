@@ -66,6 +66,7 @@ select = [
   "FURB", # refurb
   "PERF", # perflint
   "RUF", # ruff specific
+  "NPY", # NumPy specific
 ]
 ignore = [
   "E501", # Line too long
