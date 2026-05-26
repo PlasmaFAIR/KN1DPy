@@ -1,7 +1,8 @@
 import numpy as np
 
-from .make_dvr_dvx import VSpace_Differentials
 from .common import constants as CONST
+from .make_dvr_dvx import VSpace_Differentials
+
 
 def compensate_distribution(f_slice, vdiff, vr, vx, vth, target_vx, target_energy, nb = 1, assume_pos = True):
     '''

@@ -2,6 +2,7 @@ import numpy as np
 
 from ...utils import poly
 
+
 def sigma_el_h_h(E, vis = False):
     '''
     Computes momentum transfer cross section for elastic collisions of H onto H

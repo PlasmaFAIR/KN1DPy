@@ -1,28 +1,31 @@
 from dataclasses import dataclass
 from typing import Optional
+
 import numpy as np
 from numpy.typing import NDArray
 
-from .utils import sval, get_config
-from .make_dvr_dvx import VSpace_Differentials
+from .common import constants as CONST
+from .common.Kinetic_H import (
+    Kinetic_H_Errors,
+    Kinetic_H_H2_Moments,
+    Kinetic_H_Input,
+    Kinetic_H_Internal,
+    Kinetic_H_Output,
+)
 from .create_shifted_maxwellian import create_shifted_maxwellian
 from .kinetic_mesh import KineticMesh
-
+from .make_dvr_dvx import VSpace_Differentials
+from .rates.adas.adas_ionisation import acd_adas, scd_adas
 from .rates.collrad.collrad_sigmav_ion_h0 import collrad_sigmav_ion_h0
-from .rates.johnson_hinnov.johnson_hinnov import Johnson_Hinnov
-from .rates.janev.sigmav_ion_h0 import sigmav_ion_h0
-from .rates.janev.sigmav_rec_h1s import sigmav_rec_h1s
-from .rates.adas.adas_ionisation import scd_adas, acd_adas
 from .rates.janev.sigma_cx_h0 import sigma_cx_h0
 from .rates.janev.sigma_el_h_h import sigma_el_h_h
 from .rates.janev.sigma_el_h_hh import sigma_el_h_hh
 from .rates.janev.sigma_el_p_h import sigma_el_p_h
 from .rates.janev.sigmav_cx_h0 import sigmav_cx_h0
-
-from .common import constants as CONST
-from .common.Kinetic_H import Kinetic_H_Input, Kinetic_H_Internal, Kinetic_H_Output, \
-    Kinetic_H_H2_Moments, Kinetic_H_Errors
-
+from .rates.janev.sigmav_ion_h0 import sigmav_ion_h0
+from .rates.janev.sigmav_rec_h1s import sigmav_rec_h1s
+from .rates.johnson_hinnov.johnson_hinnov import Johnson_Hinnov
+from .utils import get_config, sval
 
 # Dataclasses for use in kinetic_h
 

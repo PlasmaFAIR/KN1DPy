@@ -2,6 +2,7 @@ import numpy as np
 
 from ...utils import poly
 
+
 def sigmav_h1s_h2s_hh(Te):
     '''
     Computes maxwellian averaged <sigma V) for electron impact

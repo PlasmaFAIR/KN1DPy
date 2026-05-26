@@ -1,17 +1,16 @@
 import numpy as np
 from numpy.typing import NDArray
 
-from .utils import get_config, interp_1d, reverse
-from .rates.janev.sigmav_ion_h0 import sigmav_ion_h0
+from .common import constants as CONST
+from .rates.collrad.collrad_sigmav_ion_h0 import collrad_sigmav_ion_h0
 from .rates.janev.sigmav_cx_h0 import sigmav_cx_h0
-from .rates.janev.sigmav_ion_hh import sigmav_ion_hh
+from .rates.janev.sigmav_cx_hh import sigmav_cx_hh
 from .rates.janev.sigmav_h1s_h1s_hh import sigmav_h1s_h1s_hh
 from .rates.janev.sigmav_h1s_h2s_hh import sigmav_h1s_h2s_hh
-from .rates.janev.sigmav_cx_hh import sigmav_cx_hh
-from .rates.collrad.collrad_sigmav_ion_h0 import collrad_sigmav_ion_h0
+from .rates.janev.sigmav_ion_h0 import sigmav_ion_h0
+from .rates.janev.sigmav_ion_hh import sigmav_ion_hh
 from .rates.johnson_hinnov.johnson_hinnov import Johnson_Hinnov
-
-from .common import constants as CONST
+from .utils import get_config, interp_1d, reverse
 
 
 class KineticMesh:

@@ -1,10 +1,12 @@
-import numpy as np
 from warnings import warn
 
-from .make_dvr_dvx import VSpace_Differentials
+import numpy as np
+
 from .create_shifted_maxwellian import compensate_distribution
-from .utils import sval, locate, Bound, interp_1d
 from .kinetic_mesh import KineticMesh
+from .make_dvr_dvx import VSpace_Differentials
+from .utils import Bound, interp_1d, locate, sval
+
 
 def _get_interpolation_bounds(a, b, a_name="a", b_name="b"):
     '''
