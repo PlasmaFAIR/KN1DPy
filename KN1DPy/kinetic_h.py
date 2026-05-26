@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Optional
 
 import numpy as np
 from numpy.typing import NDArray
@@ -30,7 +29,7 @@ from .utils import get_config, sval
 # Dataclasses for use in kinetic_h
 
 @dataclass
-class KHCollisions():
+class KHCollisions:
     '''
     Collision settings for Kinetic H procedure
     '''
@@ -41,7 +40,7 @@ class KHCollisions():
     SIMPLE_CX: bool = False
 
 @dataclass
-class MeshEqCoefficients():
+class MeshEqCoefficients:
     '''
     Mesh Equation values used in kinetic_h iteration
     Eqs. (3.22), (3.25), (3.30), (3.33)
@@ -54,7 +53,7 @@ class MeshEqCoefficients():
     G: NDArray
 
 @dataclass
-class CollisionType():
+class CollisionType:
     '''
     Data class for grouping H_H, H_P, and H_H2 elastic collision data
     '''
@@ -63,7 +62,7 @@ class CollisionType():
     H_H2: NDArray
 
 @dataclass
-class KHResults():
+class KHResults:
     '''
     Variables for results of KineticH.run_procedure()
     See run_procedure for more detail on individual variables
@@ -83,11 +82,11 @@ class KHResults():
     QH_total: NDArray
     AlbedoH: float
     SideWallH: NDArray
-    nH_gen0: Optional[NDArray] = None
-    nH_generations: Optional[NDArray] = None
+    nH_gen0: NDArray | None = None
+    nH_generations: NDArray | None = None
 
 
-class KineticH():
+class KineticH:
     '''
     This class is part of the "KN1D" atomic and molecular neutral transport code.
 

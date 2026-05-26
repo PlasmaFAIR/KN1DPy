@@ -209,7 +209,7 @@ def create_shifted_maxwellian(vr,vx,Tmaxwell,vx_shift,mu,mol,Tnorm):
     #--- Generate Velocity Differentials ---
     vdiff = VSpace_Differentials(vr, vx)
 
-    target_energy = np.zeros((vx_shift.size))
+    target_energy = np.zeros(vx_shift.size)
     for k in range(vx_shift.size):
         if Tmaxwell[k] <= 0:
             continue

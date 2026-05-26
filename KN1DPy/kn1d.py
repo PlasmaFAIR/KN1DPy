@@ -18,7 +18,7 @@ from .utils import get_config, interp_1d, sval
 
 
 @dataclass
-class KN1DResults():
+class KN1DResults:
     '''
     Data structure to hold and pass the results for kn1d
     '''
@@ -252,7 +252,7 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
     #  Test for v0_bar consistency in the numerics by computing it from a half maxwellian at the wall temperature
 
     nbarHMax = np.sum(kh2_differentials.dvr_vol*(fh2BC @ kh2_differentials.dvx))
-    vbarM = 2*vthM*np.sum(kh2_differentials.dvr_vol*((fh2BC @ (kh2_mesh.vx*kh2_differentials.dvx))))/nbarHMax
+    vbarM = 2*vthM*np.sum(kh2_differentials.dvr_vol*(fh2BC @ (kh2_mesh.vx*kh2_differentials.dvx)))/nbarHMax
     vbarM_error = abs(vbarM - v0_bar)/max(vbarM, v0_bar)
 
     vr2vx2_ran2 = np.zeros((kh2_mesh.vr.size,kh2_mesh.vx.size))

@@ -62,6 +62,7 @@ select = [
   "PTH", # flake8-use-pathlib
   "SIM", # flake8-simplify
   "TCH", # flake8-type-checking
+  "UP", # pyupgrade
 ]
 ignore = [
   "E501", # Line too long
