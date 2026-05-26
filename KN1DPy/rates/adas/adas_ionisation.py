@@ -2,13 +2,13 @@
 New for the python version. Option to use the ADAS ionisation and recombination rates.
 '''
 
-import os
 import urllib.request
+from pathlib import Path
 
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
 
-ADAS_DIR = os.path.dirname(os.path.abspath(__file__))
+ADAS_DIR = Path(__file__).resolve().parent
 
 _ADAS_FILES = {
     'scd12_h.dat': 'https://open.adas.ac.uk/download/adf11/scd12/scd12_h.dat',
@@ -17,17 +17,17 @@ _ADAS_FILES = {
 
 def _adas_path(filename):
     """Return the full path to an ADAS data file stored next to this module."""
-    return os.path.join(ADAS_DIR, filename)
+    return Path(ADAS_DIR) / filename
 
 def _ensure_adas_data():
     for filename, url in _ADAS_FILES.items():
         path = _adas_path(filename)
-        if not os.path.exists(path):
+        if not Path(path).exists():
             print(f"Downloading ADAS data file: {filename}")
             urllib.request.urlretrieve(url, path)
 
 def read_adf11(filename):
-    with open(filename, 'r') as f:
+    with Path(filename).open('r') as f:
         lines = f.readlines()
 
     header_tokens = lines[0].split('/')[0].split()

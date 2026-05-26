@@ -1,5 +1,3 @@
-import os
-
 import numpy as np
 from numpy.typing import NDArray
 from scipy import interpolate
@@ -51,12 +49,12 @@ class Johnson_Hinnov():
                 NOTE This feature is currently not working, use file in github
         '''
 
-        path = get_local_directory(__file__)
+        path = get_local_directory(__file__) / "jh_bscoef.npz"
 
-        if create or not os.path.exists(path+"/jh_bscoef.npz"):
+        if create or not path.exists():
             self._create_jh_bscoef()
 
-        jh_data = np.load(path+"/jh_bscoef.npz")
+        jh_data = np.load(path)
 
         self.dknot = jh_data['dknot']
         self.tknot = jh_data['tknot']

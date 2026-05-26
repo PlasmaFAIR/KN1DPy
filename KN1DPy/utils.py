@@ -1,8 +1,8 @@
 # Utility Functions for KN1DPy
 import json
-import os
 import tomllib
 import warnings
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -12,21 +12,20 @@ from scipy import interpolate
 
 # --- File Paths ---
 
-def get_local_directory(file_const):
-    dir_path = os.path.dirname(os.path.realpath(file_const))
-    return dir_path
+def get_local_directory(file_const) -> Path:
+    return Path(file_const).resolve().parent
 
 
 # --- Config Files ---
 
-def get_json(file_path: str) -> dict[str, Any]:
-    with open(file_path, 'r') as f:
+def get_json(file_path: Path | str) -> dict[str, Any]:
+    with Path(file_path).open('r') as f:
         return json.load(f)
 
-def _warn_json_deprecated(json_path: str):
-    abs_path = os.path.abspath(json_path)
-    filename  = os.path.basename(abs_path)
-    toml_name = os.path.splitext(filename)[0] + '.toml'
+def _warn_json_deprecated(json_path: Path | str):
+    abs_path = Path(json_path).resolve()
+    filename  = abs_path.name
+    toml_name = abs_path.with_suffix('.toml')
     warnings.warn(
         f"\n\nKN1DPy now uses TOML config files rather than JSON config files.\n"
         f"To convert '{filename}' to TOML, run the following Python commands from any directory:\n\n"
@@ -39,15 +38,16 @@ def _warn_json_deprecated(json_path: str):
 
 def get_config(config_path: str = './config.toml') -> dict[str, Any]:
     '''Load config file (.toml or .json). JSON files trigger a deprecation warning.'''
-    ext = os.path.splitext(config_path)[1].lower()
+    config_path = Path(config_path)
+    ext = config_path.suffix.lower()
 
     if ext == '.toml':
-        if os.path.exists(config_path):
-            with open(config_path, 'rb') as f:
+        if config_path.exists():
+            with config_path.open('rb') as f:
                 return tomllib.load(f)
         # Fall back to .json if .toml is missing
-        json_path = os.path.splitext(config_path)[0] + '.json'
-        if os.path.exists(json_path):
+        json_path = config_path.with_suffix('.json')
+        if json_path.exists():
             _warn_json_deprecated(json_path)
             return get_json(json_path)
         raise FileNotFoundError(f"Config file not found: {config_path}")
@@ -81,12 +81,12 @@ def convert_config_json_to_toml(json_path: str) -> str:
         from KN1DPy.utils import convert_config_json_to_toml
         convert_config_json_to_toml('/path/to/your/config.json')
     '''
-    abs_json = os.path.abspath(json_path)
-    abs_toml = os.path.splitext(abs_json)[0] + '.toml'
+    abs_json = Path(json_path).resolve()
+    abs_toml = abs_json.with_suffix('.toml')
     config = get_json(abs_json)
-    with open(abs_toml, 'wb') as f:
+    with Path(abs_toml).open('wb') as f:
         tomli_w.dump(config, f)
-    print(f"Converted '{os.path.basename(abs_json)}' -> '{os.path.basename(abs_toml)}'")
+    print(f"Converted '{Path(abs_json).name}' -> '{Path(abs_toml).name}'")
     print(f"Saved to:  {abs_toml}")
     return abs_toml
 
