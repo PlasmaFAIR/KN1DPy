@@ -127,7 +127,7 @@ class KineticMesh:
             if ion_rate_option == 'collrad':
                 ioniz_rate = collrad_sigmav_ion_h0(nfine, Tefine)
             elif ion_rate_option == 'jh':
-                if (jh == None):
+                if (jh is None):
                     jh = Johnson_Hinnov()
                 ioniz_rate = jh.jhs_coef(nfine, Tefine, no_null = True)
             else:
