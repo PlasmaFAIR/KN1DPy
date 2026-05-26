@@ -247,8 +247,8 @@ def kn1d(x, xlimiter, xsep, GaugeH2, mu, Ti, Te, n, vxi, LC, PipeDia,
     kh2_differentials = VSpace_Differentials(kh2_mesh.vr, kh2_mesh.vx)
 
     #NOTE Used in gammalim calculation, will be needed later
-    vthA = np.sqrt(2*CONST.Q*kh_mesh.Tnorm/(mu*CONST.H_MASS))
-    kh_differentials = VSpace_Differentials(kh_mesh.vr, kh_mesh.vx)
+    vthA = np.sqrt(2*CONST.Q*kh_mesh.Tnorm/(mu*CONST.H_MASS))  # noqa: F841
+    kh_differentials = VSpace_Differentials(kh_mesh.vr, kh_mesh.vx)  # noqa: F841
 
     #  Test for v0_bar consistency in the numerics by computing it from a half maxwellian at the wall temperature
 

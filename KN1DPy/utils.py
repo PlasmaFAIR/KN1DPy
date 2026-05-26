@@ -9,7 +9,6 @@ import os
 from numpy.typing import NDArray
 import numpy as np
 from scipy import interpolate
-from scipy.io import readsav
 
 # --- File Paths ---
 

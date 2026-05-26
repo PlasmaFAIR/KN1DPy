@@ -33,8 +33,8 @@ def read_adf11(filename):
     iz0    = int(header_tokens[0])
     n_ne   = int(header_tokens[1])
     n_Te   = int(header_tokens[2])
-    is1min = int(header_tokens[3])
-    is1max = int(header_tokens[4])
+    is1min = int(header_tokens[3])  # noqa: F841
+    is1max = int(header_tokens[4])  # noqa: F841
 
     def is_separator(line):
         return '/' in line

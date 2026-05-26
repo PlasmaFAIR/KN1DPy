@@ -47,3 +47,8 @@ ruff = ">=0.15.14"
 
 [tool.setuptools.packages.find]
 where = ["."]
+
+[tool.ruff.lint]
+select = [
+  "F", # Pyflakes
+]

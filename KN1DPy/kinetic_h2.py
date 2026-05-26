@@ -24,7 +24,8 @@ from .rates.janev.sigmav_cx_hh import sigmav_cx_hh
 
 from .utils import sval, get_config, path_interp_2d
 
-from .common.Kinetic_H2 import *
+from .common.Kinetic_H2 import Kinetic_H2_Input, Kinetic_H2_Internal, Kinetic_H2_Output, \
+    Kinetic_H2_H_Moments, Kinetic_H2_Errors
 from .common import constants as CONST
 
 
@@ -1713,9 +1714,6 @@ class KineticH2():
             max_H2_P_error[m] = np.max(H2_P_error[:,m])
 
         if self.CI_Test:
-            minRx = 1.0e-6
-            minEpara_perp = 1.0e-6
-
             # Compute Momentum transfer rate via full collision integrals for charge exchange and mixed elastic scattering
             # Then compute error between this and actual momentum transfer resulting from CX and BKG (elastic) models
 
@@ -1800,7 +1798,7 @@ class KineticH2():
                                 np.max(np.abs(np.array([T1[:,:,k], T2[:,:,k], T3[:,:,k], T4[:,:,k], T5[:,:,k], T6[:,:,k]])))
         ave_mesh_error = np.sum(self.Errors.mesh_error) / np.size(self.Errors.mesh_error)
         max_mesh_error = np.max(self.Errors.mesh_error)
-        min_mesh_error = np.min(self.Errors.mesh_error[:,:,0:self.nx-1])
+        min_mesh_error = np.min(self.Errors.mesh_error[:,:,0:self.nx-1])  # noqa: F841
 
         # Moment Error
         for m in range(0, mtest):
