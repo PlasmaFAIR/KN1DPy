@@ -129,8 +129,6 @@ def interp_fvrvxx(fa: np.ndarray, mesh_a : KineticMesh, mesh_b : KineticMesh, do
 
     # --- Get interpolation Bounds ---
 
-    get_range = lambda a, b : np.where((min(a) <= b) & (b <= max(a)))[0]
-
     vr_bound = _get_interpolation_bounds(mesh_a.vr, v_scale*mesh_b.vr, "Vra", "Vrb")
     vx_bound = _get_interpolation_bounds(mesh_a.vx, v_scale*mesh_b.vx, "Vxa", "Vxb")
     x_bound = _get_interpolation_bounds(mesh_a.x, mesh_b.x, "Xa", "Xb")

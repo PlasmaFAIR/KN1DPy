@@ -20,7 +20,8 @@ from .rates.janev.sigma_el_p_h import sigma_el_p_h
 from .rates.janev.sigmav_cx_h0 import sigmav_cx_h0
 
 from .common import constants as CONST
-from .common.Kinetic_H import *
+from .common.Kinetic_H import Kinetic_H_Input, Kinetic_H_Internal, Kinetic_H_Output, \
+    Kinetic_H_H2_Moments, Kinetic_H_Errors
 
 
 # Dataclasses for use in kinetic_h
@@ -1450,7 +1451,7 @@ class KineticH():
                                 np.max(np.abs(np.array([T1[:,:,k], T2[:,:,k], T3[:,:,k], T4[:,:,k], T5[:,:,k]])))
         ave_mesh_error = np.sum(self.Errors.mesh_error) / np.size(self.Errors.mesh_error)
         max_mesh_error = np.max(self.Errors.mesh_error)
-        min_mesh_error = np.min(self.Errors.mesh_error[:,:,0:self.nx-1])
+        min_mesh_error = np.min(self.Errors.mesh_error[:,:,0:self.nx-1])  # noqa: F841
 
         #	Moment Error
         for m in range(0, mtest):
